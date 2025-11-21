@@ -66,3 +66,19 @@ clab@C-5CG53743Q8:~/playground$
 export EXT_DOMAIN_NAME=localhost
 make try-eda
 ```
+- Then if fails again... due to certificates :-(
+  ```
+root@eda-demo-control-plane:/# kubectl describe -n eda-system catalogs.appstore.eda.nokia.com
+[...]
+Status:
+  Error:              Get "https://github.com/nokia-eda/catalog.git/info/refs?service=git-upload-pack": tls: failed to verify certificate: x509: certificate signed by unknown authority
+  Last Refresh Time:  2025-11-21T17:30:46Z
+  Operational:        false
+Events:               <none>
+```
+Trial skip TLS for this one
+```
+kubectl patch catalogs.appstore.eda.nokia.com eda-catalog-builtin-apps -n eda-system --type merge -p '{"spec":{"skipTLSVerify":true}}'
+```
+
+
