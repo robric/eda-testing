@@ -25,7 +25,7 @@ Installation
 
 Next, From the WSL instance, copy the certificate file from windows to the ca-certificates folder and update the  "ca-certificates.conf" list.
 ```
-sudo cp "/mnt/c/Users/xxxxxx/.../zscaler-ca.cer" /usr/share/ca-certificates/ZscalerRootCA.crt
+sudo cp "/mnt/c/Users/xxxx/Downloads/zscaler-ca.cer" /usr/share/ca-certificates/ZscalerRootCA.crt
 echo "ZscalerRootCA.crt" | sudo tee -a /etc/ca-certificates.conf
 sudo apt-get update
 sudo update-ca-certificates --fresh
@@ -40,20 +40,17 @@ cd playground
 export EXT_DOMAIN_NAME=localhost
 make try-eda
 ```
-- Stop when it fails and add the certificate to the kind node.
+- Stop when it fails and add the certificate to the kind node too, and restart it
 ```
-clab@C-5CG53743Q8:~$ docker ps
-CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS          PORTS                                                NAMES
-bf67e50f83b7   kindest/node:v1.33.1   "/usr/local/bin/entr…"   56 minutes ago   Up 56 minutes   127.0.0.1:35789->6443/tcp, 0.0.0.0:9443->32767/tcp   eda-demo-control-plane
-clab@C-5CG53743Q8:~$ echo "ZscalerRootCA.crt" | sudo tee -a /etc/ca-certificates.conf
-ZscalerRootCA.crt
-clab@C-5CG53743Q8:~$ docker cp zscaler-ca.cer bf67e50f83b7:/usr/local/share/ca-certificates/ZscalerRootCA.crt
-Successfully copied 3.58kB to bf67e50f83b7:/usr/local/share/ca-certificates/ZscalerRootCA.crt
-clab@C-5CG53743Q8:~$ docker exec -it bf67e50f83b7 update-ca-certificates
-Updating certificates in /etc/ssl/certs...
-rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
-1 added, 0 removed; done.
-Running hooks in /etc/ca-certificates/update.d...
-done.
-clab@C-5CG53743Q8:~$
+EDA=$(docker ps --format "{{.Names}}" | grep eda)
+docker cp "/mnt/c/Users/xxxx/Downloads/zscaler-ca.cer"  $EDA:/usr/local/share/ca-certificates/ZscalerRootCA.crt
+echo "ZscalerRootCA.crt" | sudo tee -a /etc/ca-certificates.conf
+docker exec -it $EDA echo "ZscalerRootCA.crt" | sudo tee -a /etc/ca-certificates.conf
+docker exec -it $EDA update-ca-certificates
+docker restart $EDA
+```
+- Try and redeploy EDA,
+```
+export EXT_DOMAIN_NAME=localhost
+make try-eda
 ```
