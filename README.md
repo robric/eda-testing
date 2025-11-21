@@ -1,6 +1,6 @@
 # Testing EDA on WSL
 
-## Installation (Nokia Windows Laptop)
+## Installation (Windows Laptop with Zscaler in the way...)
 
 Source mostly derived https://docs.eda.dev/25.4/software-install/non-production/wsl/ and related links + chatgpt :-)
 
