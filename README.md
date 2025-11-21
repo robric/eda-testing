@@ -48,6 +48,18 @@ echo "ZscalerRootCA.crt" | sudo tee -a /etc/ca-certificates.conf
 docker exec -it $EDA echo "ZscalerRootCA.crt" | sudo tee -a /etc/ca-certificates.conf
 docker exec -it $EDA update-ca-certificates
 docker restart $EDA
+
+=========== You should see something like that after update-ca-certificates (1 added)
+
+clab@C-5CG53743Q8:~/playground$ docker exec -it $EDA update-ca-certificates
+Updating certificates in /etc/ssl/certs...
+rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+1 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+clab@C-5CG53743Q8:~/playground$
+
+===========
 ```
 - Try and redeploy EDA,
 ```
