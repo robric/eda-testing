@@ -22,7 +22,8 @@ Installation
 - Connect to the image (wsl -d Containerlab)
 - There are some issues with certificates of the WSL image. Zscaler is a "painful man in the middle". First export the Zscaler certificate from Windows. Launch the "Manage User Certificates" from windows and export the Zscaler Root certificate to a base64-encrypted file (here called zscaler-ca.cer).
 <img width="618" height="439" alt="image" src="https://github.com/user-attachments/assets/19112c57-d072-47d9-8945-6d343a7140b2" />
-- From the WSL instance, copy the certificate file from windows to the ca-certificates folder and update the  "ca-certificates.conf" list.
+
+Next, From the WSL instance, copy the certificate file from windows to the ca-certificates folder and update the  "ca-certificates.conf" list.
 ```
 sudo cp "/mnt/c/Users/xxxxxx/.../zscaler-ca.cer" /usr/share/ca-certificates/ZscalerRootCA.crt
 echo "ZscalerRootCA.crt" | sudo tee -a /etc/ca-certificates.conf
@@ -34,8 +35,25 @@ sudo update-ca-certificates --fresh
 git clone https://github.com/nokia-eda/playground
 cd playground
 ```
-- Deploy EDA
+- Deploy EDA, it will fail due to certificates
 ```
 export EXT_DOMAIN_NAME=localhost
 make try-eda
+```
+- Stop when it fails and add the certificate to the kind node.
+```
+clab@C-5CG53743Q8:~$ docker ps
+CONTAINER ID   IMAGE                  COMMAND                  CREATED          STATUS          PORTS                                                NAMES
+bf67e50f83b7   kindest/node:v1.33.1   "/usr/local/bin/entr…"   56 minutes ago   Up 56 minutes   127.0.0.1:35789->6443/tcp, 0.0.0.0:9443->32767/tcp   eda-demo-control-plane
+clab@C-5CG53743Q8:~$ echo "ZscalerRootCA.crt" | sudo tee -a /etc/ca-certificates.conf
+ZscalerRootCA.crt
+clab@C-5CG53743Q8:~$ docker cp zscaler-ca.cer bf67e50f83b7:/usr/local/share/ca-certificates/ZscalerRootCA.crt
+Successfully copied 3.58kB to bf67e50f83b7:/usr/local/share/ca-certificates/ZscalerRootCA.crt
+clab@C-5CG53743Q8:~$ docker exec -it bf67e50f83b7 update-ca-certificates
+Updating certificates in /etc/ssl/certs...
+rehash: warning: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+1 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+clab@C-5CG53743Q8:~$
 ```
