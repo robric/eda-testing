@@ -67,7 +67,7 @@ export EXT_DOMAIN_NAME=localhost
 make try-eda
 ```
 - Then if fails again... due to certificates :-(
-  ```
+```
 root@eda-demo-control-plane:/# kubectl describe -n eda-system catalogs.appstore.eda.nokia.com
 [...]
 Status:
