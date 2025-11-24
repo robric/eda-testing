@@ -10,7 +10,7 @@ Deactivate Zscaler security for the EDA installation (too many issues with certs
 
 <img width="325" height="260" alt="image" src="https://github.com/user-attachments/assets/043d283d-0d84-4369-8817-021b517550fa" />
 
-### Installation process
+### Installation Steps
 
 Prerequisites: make sure wsl version is greater than 2.5
 ```
@@ -129,7 +129,7 @@ We have classical kubernetes overlays (various ns):
 More interesting things in the eda-system namespace:
 - **Simulators**
   - `cx-eda--leaf1-sim`, `cx-eda--leaf2-sim`, `cx-eda--spine1-sim`, `cx-eda--testman-default-sim`
-  - *Role:* Probably to simulate leaf/spine nodes and test manager for fabric topology.
+  - *Role:* EDA provides a built-in CX engine (Digital Twin) for network simulation. Here we simulate leaf/spine nodes and test manager for fabric topology.
 - **Core Services**
   - `eda-api`, `eda-appstore`, `eda-asvr`, `eda-bsvr`, `eda-ce`, `eda-fe`, `eda-sa`, `eda-sc`, `eda-se`
   - *Role:* PI, app store, and core EDA services for orchestration and automation.
@@ -148,3 +148,56 @@ More interesting things in the eda-system namespace:
 - **NPP Nodes**
   - `eda-npp-0`, `eda-npp-1`
   - *Role:* **Node Provisioning Platform** agents for Zero-Touch Provisioning (ZTP). Push initial configs /bootstrap scripts to network devices, ConfigEngine, IP assignment, TLS profiles...
+
+### Testing 
+
+1. Load topology (make script)
+
+The demo topology can be pre-loaded via make. This populates the eda-topology config map with node and links.
+
+<img width="836" height="454" alt="image" src="https://github.com/user-attachments/assets/b841d8db-33c0-4aef-af1a-7e462c3b2aff" />
+
+```
+clab@C-5CG53743Q8:~/playground$ make topology-load
+--> TOPO: JSON Processing
+configmap/eda-topology configured
+configmap/eda-topology-sim unchanged
+--> TOPO: config created in cluster
+--> TOPO: Using POD_NAME: eda-api-fc65bd66c-dw74c
+--> TOPO: Checking if eda-api-fc65bd66c-dw74c is Running
+[...]
+root@eda-demo-control-plane:/# kubectl get -n eda cm eda-topology -o yaml
+apiVersion: v1
+data:
+  eda.yaml: |
+    ---
+    items:
+      - spec:
+          nodes:
+            - name: leaf1
+              labels:
+                eda.nokia.com/role: leaf
+                eda.nokia.com/security-profile: managed
+              spec:
+                operatingSystem: srl
+                version: 25.7.2
+                platform: 7220 IXR-D3L
+                nodeProfile: srlinux-ghcr-25.7.2
+[...]
+          links:
+            - name: leaf1-spine1-1
+              labels:
+                eda.nokia.com/role: interSwitch
+              spec:
+                links:
+                  - local:
+                      node: leaf1
+                      interface: ethernet-1-1
+                    remote:
+                      node: spine1
+                      interface: ethernet-1-1
+                    type: interSwitch
+[...]
+```
+
+
