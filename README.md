@@ -3,7 +3,7 @@
 ## Installation (Windows Laptop)
 
 Deactivate Zscaler security for the EDA installation (too many issues with certs otherwise).
-<img width="750" height="564" alt="image" src="https://github.com/user-attachments/assets/043d283d-0d84-4369-8817-021b517550fa" />
+<img width="325" height="260" alt="image" src="https://github.com/user-attachments/assets/043d283d-0d84-4369-8817-021b517550fa" />
 
 Source mostly derived https://docs.eda.dev/25.4/software-install/non-production/wsl/ and related links + chatgpt :-)
 
