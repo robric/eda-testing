@@ -116,18 +116,12 @@ root@eda-demo-control-plane:/#
 ```
 So in summary:
 
-Classical kubernetes services (various ns):
+Classical kubernetes overlays (various ns):
  - **cert-manager**: certificate management
  - **metallb**: local Load balancer
- - **local-path-storage**: local storage.
+ - **local-path-storage**: local storage (pv)
+
 Eda services in eda-system namespace:
-  - **Simulators**
-    - `cx-eda--leaf1-sim`, `cx-eda--leaf2-sim`, `cx-eda--spine1-sim`, `cx-eda--testman-default-sim`
-    - *Role:* Simulate leaf/spine nodes and test manager for fabric topology.
-
----
-
-### **2. eda-system** *(Main Application Namespace)*
 - **Simulators**
   - `cx-eda--leaf1-sim`, `cx-eda--leaf2-sim`, `cx-eda--spine1-sim`, `cx-eda--testman-default-sim`
   - *Role:* Simulate leaf/spine nodes and test manager for fabric topology.
@@ -148,71 +142,4 @@ Eda services in eda-system namespace:
   - *Role:* Certificate validation and trust management.
 - **NPP Nodes**
   - `eda-npp-0`, `eda-npp-1`
-  - *Role:* **Node Provisioning Platform** agents for Zero-Touch Provisioning (ZTP).  
-    - Push initial configs and bootstrap scripts to network devices.
-    - Handle secure onboarding, IP assignment, TLS profiles, and license application.
-    - Maintain ConfigEngine → NPP → Node communication for state synchronization.
-
----
-
-### **3. kube-system**
-- Control-plane components:
-  - `etcd`, `kube-apiserver`, `kube-controller-manager`, `kube-scheduler`
-- Networking & DNS:
-  - `coredns` (x2), `kube-proxy`, `kindnet`
-
----
-
-### **4. local-path-storage**
-- `local-path-provisioner`
----
-
-### **5. metallb-system**
-- Regular metallb services....
-
----
-
-
-- Simulators
-    cx-eda--leaf1-sim, cx-eda--leaf2-sim, cx-eda--spine1-sim, cx-eda--testman-default-sim
-    Role: Simulate leaf/spine nodes and test manager for fabric topology.
-
-
-Core Services
-
-eda-api, eda-appstore, eda-asvr, eda-bsvr, eda-ce, eda-fe, eda-sa, eda-sc, eda-se
-Role: Provide API, app store, and core EDA services for orchestration and automation.
-
-
-Support Services
-
-eda-postgres, eda-keycloak, eda-metrics-server, eda-toolbox
-Role: Database, authentication, metrics, and utility tools.
-
-
-Logging
-
-eda-fluentbit, eda-fluentd
-Role: Collect and forward logs for observability.
-
-
-Git Integration
-
-eda-git, eda-git-replica
-Role: Manage GitOps workflows and configuration repositories.
-
-
-Cert & Trust
-
-eda-cert-checker, trust-manager
-Role: Certificate validation and trust management.
-
-
-NPP Nodes
-
-eda-npp-0, eda-npp-1
-Role: Node Provisioning Platform agents for Zero-Touch Provisioning (ZTP).
-
-Push initial configs and bootstrap scripts to network devices.
-Handle secure onboarding, IP assignment, TLS profiles, and license application.
-Maintain ConfigEngine → NPP → Node communication for state synchronization.
+  - *Role:* **Node Provisioning Platform** agents for Zero-Touch Provisioning (ZTP). Push initial configs /bootstrap scripts to network devices, ConfigEngine, IP assignment, TLS profiles...
