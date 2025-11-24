@@ -121,18 +121,18 @@ root@eda-demo-control-plane:/#
 ```
 So in summary:
 
-Classical kubernetes overlays (various ns):
+We have classical kubernetes overlays (various ns):
  - **cert-manager**: certificate management
  - **metallb**: local Load balancer
  - **local-path-storage**: local storage (pv)
 
-Eda services in eda-system namespace:
+More interesting things in the eda-system namespace:
 - **Simulators**
   - `cx-eda--leaf1-sim`, `cx-eda--leaf2-sim`, `cx-eda--spine1-sim`, `cx-eda--testman-default-sim`
-  - *Role:* Simulate leaf/spine nodes and test manager for fabric topology.
+  - *Role:* Probably to simulate leaf/spine nodes and test manager for fabric topology.
 - **Core Services**
   - `eda-api`, `eda-appstore`, `eda-asvr`, `eda-bsvr`, `eda-ce`, `eda-fe`, `eda-sa`, `eda-sc`, `eda-se`
-  - *Role:* Provide API, app store, and core EDA services for orchestration and automation.
+  - *Role:* PI, app store, and core EDA services for orchestration and automation.
 - **Support Services**
   - `eda-postgres`, `eda-keycloak`, `eda-metrics-server`, `eda-toolbox`
   - *Role:* Database, authentication, metrics, and utility tools.
