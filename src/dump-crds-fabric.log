@@ -1,0 +1,844 @@
+clab@C-5CG53743Q8:~/playground$ kubectl exec -it -n eda toponodes
+error: you must specify at least one command for the container
+clab@C-5CG53743Q8:~/playground$
+for crd in $(kubectl get crd -o name); do
+  echo "### $crd ###"
+  kind=$(kubectl get $crd -o jsonpath='{.spec.names.plural}')
+  kubectl get $kind --all-namespaces || echo "No instances found"
+done
+### customresourcedefinition.apiextensions.k8s.io/addresspools.metallb.io ###
+Warning: metallb.io v1beta1 AddressPool is deprecated, consider using IPAddressPool
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/aggregateroutes.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/alarms.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/appinstallers.appstore.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/artifacts.artifacts.eda.nokia.com ###
+NAMESPACE    NAME                          STATUS
+eda-system   eda-api-trustbundle           Available
+eda-system   llm-db-srlinux-ghcr-24.10.1   Available
+eda-system   llm-db-srlinux-ghcr-24.10.2   Available
+eda-system   llm-db-srlinux-ghcr-24.10.3   Available
+eda-system   llm-db-srlinux-ghcr-24.10.4   Available
+eda-system   llm-db-srlinux-ghcr-24.10.5   Available
+eda-system   llm-db-srlinux-ghcr-25.3.2    Available
+eda-system   llm-db-srlinux-ghcr-25.3.3    Available
+eda-system   llm-db-srlinux-ghcr-25.7.1    Available
+eda-system   llm-db-srlinux-ghcr-25.7.2    Available
+eda-system   llm-db-sros-ghcr-24.10.r4     Available
+eda-system   llm-db-sros-ghcr-24.10.r5     Available
+eda-system   llm-db-sros-ghcr-24.10.r6     Available
+eda-system   llm-db-sros-ghcr-25.3.r2      Available
+eda-system   llm-db-sros-ghcr-25.7.r1      Available
+eda-system   srlinux-ghcr-24.10.1          Available
+eda-system   srlinux-ghcr-24.10.2          Available
+eda-system   srlinux-ghcr-24.10.3          Available
+eda-system   srlinux-ghcr-24.10.4          Available
+eda-system   srlinux-ghcr-24.10.5          Available
+eda-system   srlinux-ghcr-25.3.2           Available
+eda-system   srlinux-ghcr-25.3.3           Available
+eda-system   srlinux-ghcr-25.7.1           Available
+eda-system   srlinux-ghcr-25.7.2           Available
+eda-system   sros-ghcr-24.10.r4            Available
+eda-system   sros-ghcr-24.10.r5            Available
+eda-system   sros-ghcr-24.10.r6            Available
+eda-system   sros-ghcr-25.3.r2             Available
+eda-system   sros-ghcr-25.7.r1             Available
+eda          bootscript-leaf1              Available
+eda          bootscript-leaf2              Available
+eda          bootscript-spine1             Available
+eda          initcfg-leaf1-25.7.2          Available
+eda          initcfg-leaf2-25.7.2          Available
+eda          initcfg-spine1-25.7.2         Available
+### customresourcedefinition.apiextensions.k8s.io/aspathsetdeployments.routingpolicies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/aspathsets.routingpolicies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/attachmentlookups.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/backends.aifabrics.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/backendstates.aifabrics.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/banners.siteinfo.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bannerstates.siteinfo.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bfdprofiles.metallb.io ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bgpadvertisements.metallb.io ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bgpgroupdeployments.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bgpgroups.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bgpgroupstates.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bgppeers.metallb.io ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bgppeers.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bgppeerstates.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/breakouts.interfaces.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bridgedomaindeployments.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bridgedomains.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bridgedomainstates.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bridgeinterfaces.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bridgeinterfacestates.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/bundles.trust.cert-manager.io ###
+NAME                        CONFIGMAP TARGET   SECRET TARGET   SYNCED   REASON   AGE
+eda-api-trust-bundle        trust-bundle.pem                   True     Synced   5h22m
+eda-internal-trust-bundle   trust-bundle.pem                   True     Synced   5h22m
+eda-node-trust-bundle       trust-bundle.pem                   True     Synced   5h22m
+### customresourcedefinition.apiextensions.k8s.io/catalogs.appstore.eda.nokia.com ###
+NAMESPACE    NAME                       TITLE                       TYPE   OPERATIONAL
+eda-system   eda-catalog-builtin-apps   EDA built in apps catalog   git    true
+### customresourcedefinition.apiextensions.k8s.io/certificatechecks.certcheck.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/certificaterequests.cert-manager.io ###
+NAMESPACE    NAME                                   APPROVED   DENIED   READY   ISSUER                REQUESTER                                                  AGE
+eda-system   1030bf62-6de4-4346-9851-b6eb9d6b6f0a   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   1bb36a44-bd66-4367-b55c-df1c5a2be0e9   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   1f0fe607-a726-4367-a44c-8ab590a4c073   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   2c1ced85-d2d7-4af9-8442-3f14dd459343   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   322a1f67-fd46-4e8e-b39f-b504eeda2d42   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   3be0b444-a643-43f2-8a91-3b3a5695fecf   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   46a08157-e670-4929-b3ae-9b40e8f88a38   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h12m
+eda-system   4b56f3a9-616e-4345-ae45-1f69eb739238   True                True    eda-api-issuer        system:serviceaccount:eda-system:cert-manager-csi-driver   5h22m
+eda-system   5bf74d7e-c3cb-41ee-b961-9962511ebdf8   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   77b7e2b3-6143-4e8d-be6b-065314a96227   True                True    eda-api-issuer        system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   951a9484-2970-4670-a2ce-749790bf9c60   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h13m
+eda-system   9a571a98-35a3-46c9-8a76-73c37373aef4   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   9b50f2d0-0b4c-4f37-8c92-2dc7e15e458e   True                True    eda-api-issuer        system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   9b5dcf91-91e4-49cd-a825-2b4a6973cd29   True                True    eda-api-issuer        system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   a81b9a30-1e39-4c15-b946-4c1ffac7a4d2   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h15m
+eda-system   ac2cd026-626a-4d8b-b874-b4ce8dd7ac8d   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   b1db8ae8-c806-4ea4-a65e-664d19cd4f4a   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   bfc57871-fe8c-405d-9fbc-1d32c268562e   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h22m
+eda-system   d4e35e72-964f-4e50-9220-56bae1b36354   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h22m
+eda-system   d7bf761e-d653-4066-b73a-27f7de99a063   True                True    eda-api-issuer        system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   dc2df5ad-5e8f-43dd-9b01-7e0fcf82031f   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   eda--leaf1--eda-node-issuer-csr        True                True    eda-node-issuer       system:serviceaccount:eda-system:eda-bsvr                  5h12m
+eda-system   eda--leaf2--eda-node-issuer-csr        True                True    eda-node-issuer       system:serviceaccount:eda-system:eda-bsvr                  5h13m
+eda-system   eda--spine1--eda-node-issuer-csr       True                True    eda-node-issuer       system:serviceaccount:eda-system:eda-bsvr                  5h13m
+eda-system   eda-api-ca-1                           True                True    eda-root-ca-issuer    system:serviceaccount:cert-manager:cert-manager            5h22m
+eda-system   eda-bootstrap-ca-1                     True                True    eda-root-ca-issuer    system:serviceaccount:cert-manager:cert-manager            5h22m
+eda-system   eda-internal-ca-1                      True                True    eda-root-ca-issuer    system:serviceaccount:cert-manager:cert-manager            5h22m
+eda-system   eda-node-ca-1                          True                True    eda-root-ca-issuer    system:serviceaccount:cert-manager:cert-manager            5h22m
+eda-system   eda-webhook-ca-1                       True                True    eda-root-ca-issuer    system:serviceaccount:cert-manager:cert-manager            5h22m
+eda-system   fb9c1fc6-eccb-4b5f-89d5-2734551e2e3c   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   fc1aa9c3-d398-420e-b6ef-2cbd88dfb1b1   True                True    eda-internal-issuer   system:serviceaccount:eda-system:cert-manager-csi-driver   5h21m
+eda-system   trust-manager-1                        True                True    trust-manager         system:serviceaccount:cert-manager:cert-manager            5h23m
+### customresourcedefinition.apiextensions.k8s.io/certificates.cert-manager.io ###
+NAMESPACE    NAME               READY   SECRET              AGE
+eda-system   eda-api-ca         True    eda-api-ca          5h22m
+eda-system   eda-bootstrap-ca   True    eda-bootstrap-ca    5h22m
+eda-system   eda-internal-ca    True    eda-internal-ca     5h22m
+eda-system   eda-node-ca        True    eda-node-ca         5h22m
+eda-system   eda-webhook-ca     True    eda-webhook-ca      5h22m
+eda-system   trust-manager      True    trust-manager-tls   5h23m
+### customresourcedefinition.apiextensions.k8s.io/challenges.acme.cert-manager.io ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/chassis.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/checkdefaultbgppeerss.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/checkinterfacess.interfaces.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/cliplugins.environment.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/clusterdiscoveries.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/clusterissuers.cert-manager.io ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/clusterroles.core.eda.nokia.com ###
+NAME                                                                   CREATED AT
+admin                                                                  2025-11-25T10:39:24Z
+cert-manager-cainjector                                                2025-11-25T10:41:00Z
+cert-manager-cluster-view                                              2025-11-25T10:41:00Z
+cert-manager-controller-approve:cert-manager-io                        2025-11-25T10:41:00Z
+cert-manager-controller-certificates                                   2025-11-25T10:41:00Z
+cert-manager-controller-certificatesigningrequests                     2025-11-25T10:41:00Z
+cert-manager-controller-challenges                                     2025-11-25T10:41:00Z
+cert-manager-controller-clusterissuers                                 2025-11-25T10:41:00Z
+cert-manager-controller-ingress-shim                                   2025-11-25T10:41:00Z
+cert-manager-controller-issuers                                        2025-11-25T10:41:00Z
+cert-manager-controller-orders                                         2025-11-25T10:41:00Z
+cert-manager-csi-driver                                                2025-11-25T10:41:16Z
+cert-manager-edit                                                      2025-11-25T10:41:00Z
+cert-manager-view                                                      2025-11-25T10:41:00Z
+cert-manager-webhook:subjectaccessreviews                              2025-11-25T10:41:00Z
+cluster-admin                                                          2025-11-25T10:39:24Z
+eda-asvr-admin                                                         2025-11-25T10:42:30Z
+eda-bsvr-admin                                                         2025-11-25T10:42:30Z
+eda-ce-admin                                                           2025-11-25T10:42:30Z
+eda-cert-checker-admin                                                 2025-11-25T10:42:30Z
+eda-cx                                                                 2025-11-25T10:42:30Z
+eda-toolbox-admin                                                      2025-11-25T10:42:30Z
+edit                                                                   2025-11-25T10:39:24Z
+fluent-bit-read                                                        2025-11-25T10:40:36Z
+kindnet                                                                2025-11-25T10:39:28Z
+kubeadm:get-nodes                                                      2025-11-25T10:39:25Z
+local-path-provisioner-role                                            2025-11-25T10:39:29Z
+metallb-system:controller                                              2025-11-25T10:39:47Z
+metallb-system:speaker                                                 2025-11-25T10:39:47Z
+system:aggregate-to-admin                                              2025-11-25T10:39:24Z
+system:aggregate-to-edit                                               2025-11-25T10:39:24Z
+system:aggregate-to-view                                               2025-11-25T10:39:24Z
+system:auth-delegator                                                  2025-11-25T10:39:24Z
+system:basic-user                                                      2025-11-25T10:39:24Z
+system:certificates.k8s.io:certificatesigningrequests:nodeclient       2025-11-25T10:39:24Z
+system:certificates.k8s.io:certificatesigningrequests:selfnodeclient   2025-11-25T10:39:24Z
+system:certificates.k8s.io:kube-apiserver-client-approver              2025-11-25T10:39:24Z
+system:certificates.k8s.io:kube-apiserver-client-kubelet-approver      2025-11-25T10:39:24Z
+system:certificates.k8s.io:kubelet-serving-approver                    2025-11-25T10:39:24Z
+system:certificates.k8s.io:legacy-unknown-approver                     2025-11-25T10:39:24Z
+system:controller:attachdetach-controller                              2025-11-25T10:39:24Z
+system:controller:certificate-controller                               2025-11-25T10:39:24Z
+system:controller:clusterrole-aggregation-controller                   2025-11-25T10:39:24Z
+system:controller:cronjob-controller                                   2025-11-25T10:39:24Z
+system:controller:daemon-set-controller                                2025-11-25T10:39:24Z
+system:controller:deployment-controller                                2025-11-25T10:39:24Z
+system:controller:disruption-controller                                2025-11-25T10:39:24Z
+system:controller:endpoint-controller                                  2025-11-25T10:39:24Z
+system:controller:endpointslice-controller                             2025-11-25T10:39:24Z
+system:controller:endpointslicemirroring-controller                    2025-11-25T10:39:24Z
+system:controller:ephemeral-volume-controller                          2025-11-25T10:39:24Z
+system:controller:expand-controller                                    2025-11-25T10:39:24Z
+system:controller:generic-garbage-collector                            2025-11-25T10:39:24Z
+system:controller:horizontal-pod-autoscaler                            2025-11-25T10:39:24Z
+system:controller:job-controller                                       2025-11-25T10:39:24Z
+system:controller:legacy-service-account-token-cleaner                 2025-11-25T10:39:24Z
+system:controller:namespace-controller                                 2025-11-25T10:39:24Z
+system:controller:node-controller                                      2025-11-25T10:39:24Z
+system:controller:persistent-volume-binder                             2025-11-25T10:39:24Z
+system:controller:pod-garbage-collector                                2025-11-25T10:39:24Z
+system:controller:pv-protection-controller                             2025-11-25T10:39:24Z
+system:controller:pvc-protection-controller                            2025-11-25T10:39:24Z
+system:controller:replicaset-controller                                2025-11-25T10:39:24Z
+system:controller:replication-controller                               2025-11-25T10:39:24Z
+system:controller:resourcequota-controller                             2025-11-25T10:39:24Z
+system:controller:root-ca-cert-publisher                               2025-11-25T10:39:24Z
+system:controller:route-controller                                     2025-11-25T10:39:24Z
+system:controller:selinux-warning-controller                           2025-11-25T10:39:24Z
+system:controller:service-account-controller                           2025-11-25T10:39:24Z
+system:controller:service-cidrs-controller                             2025-11-25T10:39:24Z
+system:controller:service-controller                                   2025-11-25T10:39:24Z
+system:controller:statefulset-controller                               2025-11-25T10:39:24Z
+system:controller:ttl-after-finished-controller                        2025-11-25T10:39:24Z
+system:controller:ttl-controller                                       2025-11-25T10:39:24Z
+system:controller:validatingadmissionpolicy-status-controller          2025-11-25T10:39:24Z
+system:coredns                                                         2025-11-25T10:39:26Z
+system:discovery                                                       2025-11-25T10:39:24Z
+system:heapster                                                        2025-11-25T10:39:24Z
+system:kube-aggregator                                                 2025-11-25T10:39:24Z
+system:kube-controller-manager                                         2025-11-25T10:39:24Z
+system:kube-dns                                                        2025-11-25T10:39:24Z
+system:kube-scheduler                                                  2025-11-25T10:39:24Z
+system:kubelet-api-admin                                               2025-11-25T10:39:24Z
+system:monitoring                                                      2025-11-25T10:39:24Z
+system:node                                                            2025-11-25T10:39:24Z
+system:node-bootstrapper                                               2025-11-25T10:39:24Z
+system:node-problem-detector                                           2025-11-25T10:39:24Z
+system:node-proxier                                                    2025-11-25T10:39:24Z
+system:persistent-volume-provisioner                                   2025-11-25T10:39:24Z
+system:public-info-viewer                                              2025-11-25T10:39:24Z
+system:service-account-issuer-discovery                                2025-11-25T10:39:24Z
+system:volume-scheduler                                                2025-11-25T10:39:24Z
+trust-manager                                                          2025-11-25T10:41:33Z
+view                                                                   2025-11-25T10:39:24Z
+### customresourcedefinition.apiextensions.k8s.io/communities.metallb.io ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/communitysetdeployments.routingpolicies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/communitysets.routingpolicies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/components.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/configlets.config.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/configletstates.config.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/controlmodules.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/controlplanefilters.filters.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/cpuoverlays.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/cxclusters.cx.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultaggregateroutes.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultbgpgroupdeployments.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultbgpgroups.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultbgppeers.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultinterfaces.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultinterfacestates.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultroutereflectorclients.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultroutereflectors.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultrouters.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultrouterstates.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/defaultstaticroutes.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/deployimages.os.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/designers.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/deviationactions.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/deviationoverlays.topologies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/deviations.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/dhcprelays.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/discoveries.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/discoveryaggregatestates.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/discoverystates.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/drains.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/drainstates.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/edgeinterfaces.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/edgepings.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/egresspolicys.qos.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/engineconfigs.core.eda.nokia.com ###
+NAMESPACE    NAME            AGE
+eda-system   engine-config   5h22m
+### customresourcedefinition.apiextensions.k8s.io/fabricmodules.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/fabrics.fabrics.eda.nokia.com ###
+NAMESPACE   NAME         LAST CHANGE   OPERATIONAL STATE
+eda         myfabric-1   33m           up
+### customresourcedefinition.apiextensions.k8s.io/fabricstates.fabrics.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/fans.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/filterdeployments.filters.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/filters.filters.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/forwardingclasss.qos.eda.nokia.com ###
+NAMESPACE   NAME   AGE
+eda         af     5h16m
+eda         be     5h16m
+eda         ef     5h16m
+eda         fc0    5h16m
+eda         fc1    5h16m
+eda         fc2    5h16m
+eda         fc3    5h16m
+eda         fc4    5h16m
+eda         fc5    5h16m
+eda         fc6    5h16m
+eda         fc7    5h16m
+eda         h1     5h16m
+eda         h2     5h16m
+eda         l1     5h16m
+eda         l2     5h16m
+eda         nc     5h16m
+### customresourcedefinition.apiextensions.k8s.io/globalconfigs.core.eda.nokia.com ###
+NAMESPACE    NAME     AGE
+eda-system   global   5h22m
+### customresourcedefinition.apiextensions.k8s.io/httpproxies.core.eda.nokia.com ###
+NAMESPACE    NAME                     ROOT URL
+eda-system   appstore.eda.nokia.com   http://eda-appstore:8082/api/
+eda-system   asvr                     https://eda-asvr/
+eda-system   gogs                     http://eda-git:3000/
+eda-system   gogs-replica             http://eda-git-replica:3000/
+eda-system   keycloak                 https://eda-keycloak:9443/core/httpproxy/v1/keycloak
+### customresourcedefinition.apiextensions.k8s.io/indexallocationpools.core.eda.nokia.com ###
+NAMESPACE   NAME                 AGE
+eda         asn-pool             5h16m
+eda         demo-subif-pool      5h16m
+eda         es-index-pool        5h16m
+eda         evi-pool             5h16m
+eda         irb-subif-pool       5h16m
+eda         lag-admin-key-pool   5h16m
+eda         lagid-pool           5h16m
+eda         leafindex-pool       5h16m
+eda         loopback-id-pool     5h16m
+eda         mirror-sdp-pool      5h16m
+eda         subif-pool           5h16m
+eda         tunnel-index-pool    5h16m
+eda         vlan-pool            5h16m
+eda         vni-pool             5h16m
+### customresourcedefinition.apiextensions.k8s.io/ingresspolicys.qos.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/inits.bootstrap.eda.nokia.com ###
+NAMESPACE   NAME        AGE
+eda         init-base   5h16m
+### customresourcedefinition.apiextensions.k8s.io/interfacemodules.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/interfaces.interfaces.eda.nokia.com ###
+NAMESPACE   NAME                      ENABLED   OPERATIONAL STATE   SPEED   LAST CHANGE   AGE
+eda         lag-leaf1-2-e1212-local   true      up                  100G    5h12m         5h16m
+eda         lag-leaf1-e1011-local     true      up                  200G    5h12m         5h16m
+eda         lag-leaf2-e1011-local     true      up                  200G    5h13m         5h16m
+eda         leaf1-ethernet-1-1        true      up                  100G    5h12m         5h16m
+eda         leaf1-ethernet-1-2        true      up                  100G    5h12m         5h16m
+eda         leaf1-ethernet-1-3        true      up                  100G    5h12m         5h16m
+eda         leaf1-ethernet-1-4        true      up                  100G    5h12m         5h16m
+eda         leaf1-ethernet-1-5        true      up                  100G    5h12m         5h16m
+eda         leaf1-ethernet-1-6        true      up                  100G    5h12m         5h16m
+eda         leaf1-ethernet-1-7        true      up                  100G    5h12m         5h16m
+eda         leaf1-ethernet-1-8        true      up                  100G    5h12m         5h16m
+eda         leaf1-ethernet-1-9        true      up                  100G    5h12m         5h16m
+eda         leaf2-ethernet-1-1        true      up                  100G    5h12m         5h16m
+eda         leaf2-ethernet-1-2        true      up                  100G    5h12m         5h16m
+eda         leaf2-ethernet-1-3        true      up                  100G    5h13m         5h16m
+eda         leaf2-ethernet-1-4        true      up                  100G    5h13m         5h16m
+eda         leaf2-ethernet-1-5        true      up                  100G    5h13m         5h16m
+eda         leaf2-ethernet-1-6        true      up                  100G    5h13m         5h16m
+eda         leaf2-ethernet-1-7        true      up                  100G    5h13m         5h16m
+eda         leaf2-ethernet-1-8        true      up                  100G    5h13m         5h16m
+eda         leaf2-ethernet-1-9        true      up                  100G    5h13m         5h16m
+eda         spine1-ethernet-1-1       true      up                  400G    5h12m         5h16m
+eda         spine1-ethernet-1-2       true      up                  400G    5h12m         5h16m
+eda         spine1-ethernet-1-3       true      up                  400G    5h12m         5h16m
+eda         spine1-ethernet-1-4       true      up                  400G    5h12m         5h16m
+### customresourcedefinition.apiextensions.k8s.io/interfacestates.interfaces.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/ipaddresspools.metallb.io ###
+NAMESPACE        NAME   AUTO ASSIGN   AVOID BUGGY IPS   ADDRESSES
+metallb-system   kind   true          true              ["172.18.255.0/24","fc00:f853:ccd:e793:ffff:ffff:ffff:ffff/120"]
+### customresourcedefinition.apiextensions.k8s.io/ipallocationpools.core.eda.nokia.com ###
+NAMESPACE   NAME              AGE
+eda         ip-pool           5h16m
+eda         systemipv4-pool   5h16m
+eda         systemipv6-pool   5h16m
+### customresourcedefinition.apiextensions.k8s.io/ipinsubnetallocationpools.core.eda.nokia.com ###
+NAMESPACE   NAME                AGE
+eda         ip-in-subnet-pool   5h16m
+eda         ipv4-mgmt-pool      5h16m
+eda         ipv6-mgmt-pool      5h16m
+### customresourcedefinition.apiextensions.k8s.io/irbinterfaces.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/irbinterfacestates.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/islpings.fabrics.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/isls.fabrics.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/islstates.fabrics.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/issuers.cert-manager.io ###
+NAMESPACE    NAME                   READY   AGE
+eda-system   eda-api-issuer         True    5h23m
+eda-system   eda-bootstrap-issuer   True    5h23m
+eda-system   eda-internal-issuer    True    5h23m
+eda-system   eda-node-issuer        True    5h23m
+eda-system   eda-root-ca-issuer     True    5h23m
+eda-system   eda-webhook-issuer     True    5h23m
+eda-system   trust-manager          True    5h24m
+### customresourcedefinition.apiextensions.k8s.io/keychaindeployments.security.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/keychains.security.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/l2advertisements.metallb.io ###
+NAMESPACE        NAME    IPADDRESSPOOLS   IPADDRESSPOOL SELECTORS   INTERFACES
+metallb-system   empty
+### customresourcedefinition.apiextensions.k8s.io/licenses.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/lldpoverlays.topologies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/managementrouters.bootstrap.eda.nokia.com ###
+NAMESPACE   NAME          AGE
+eda         mgmt-router   5h16m
+### customresourcedefinition.apiextensions.k8s.io/managementrouterstates.bootstrap.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/manifests.core.eda.nokia.com ###
+NAMESPACE    NAME                            AGE
+eda-system   aaa.eda.nokia.com               5h16m
+eda-system   aifabrics.eda.nokia.com         5h16m
+eda-system   bootstrap.eda.nokia.com         5h16m
+eda-system   components.eda.nokia.com        5h16m
+eda-system   config.eda.nokia.com            5h16m
+eda-system   environment.eda.nokia.com       5h16m
+eda-system   fabrics.eda.nokia.com           5h16m
+eda-system   filters.eda.nokia.com           5h16m
+eda-system   interfaces.eda.nokia.com        5h16m
+eda-system   oam.eda.nokia.com               5h16m
+eda-system   os.eda.nokia.com                5h16m
+eda-system   protocols.eda.nokia.com         5h16m
+eda-system   qos.eda.nokia.com               5h16m
+eda-system   routing.eda.nokia.com           5h16m
+eda-system   routingpolicies.eda.nokia.com   5h16m
+eda-system   security.eda.nokia.com          5h16m
+eda-system   services.eda.nokia.com          5h16m
+eda-system   siteinfo.eda.nokia.com          5h16m
+eda-system   system.eda.nokia.com            5h16m
+eda-system   timing.eda.nokia.com            5h16m
+eda-system   topologies.eda.nokia.com        5h16m
+### customresourcedefinition.apiextensions.k8s.io/memoryoverlays.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/mirrorfilterdeployments.filters.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/mirrorfilters.filters.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/mirrors.oam.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/mirrorstates.oam.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/monitoraggregatestates.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/monitoraggregatestates.system.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/monitors.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/monitors.system.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/monitorstates.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/monitorstates.system.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/namespaces.core.eda.nokia.com ###
+NAME                 STATUS   AGE
+cert-manager         Active   5h24m
+default              Active   5h26m
+eda                  Active   5h22m
+eda-system           Active   5h25m
+kube-node-lease      Active   5h26m
+kube-public          Active   5h26m
+kube-system          Active   5h26m
+local-path-storage   Active   5h26m
+metallb-system       Active   5h25m
+### customresourcedefinition.apiextensions.k8s.io/nodeconfigs.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/nodegroupdeployments.aaa.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/nodegroups.aaa.eda.nokia.com ###
+NAMESPACE   NAME   AGE
+eda         sudo   5h16m
+### customresourcedefinition.apiextensions.k8s.io/nodeprofiles.core.eda.nokia.com ###
+NAMESPACE   NAME                   OS     VERSION    NODE USER   TRANSPORT   PORT
+eda         srlinux-ghcr-24.10.1   srl    24.10.1    admin                   57400
+eda         srlinux-ghcr-24.10.2   srl    24.10.2    admin                   57400
+eda         srlinux-ghcr-24.10.3   srl    24.10.3    admin                   57400
+eda         srlinux-ghcr-24.10.4   srl    24.10.4    admin                   57400
+eda         srlinux-ghcr-24.10.5   srl    24.10.5    admin                   57400
+eda         srlinux-ghcr-25.3.2    srl    25.3.2     admin                   57400
+eda         srlinux-ghcr-25.3.3    srl    25.3.3     admin                   57400
+eda         srlinux-ghcr-25.7.1    srl    25.7.1     admin                   57400
+eda         srlinux-ghcr-25.7.2    srl    25.7.2     admin                   57400
+eda         sros-ghcr-24.10.r4     sros   24.10.r4   admin                   57400
+eda         sros-ghcr-24.10.r5     sros   24.10.r5   admin                   57400
+eda         sros-ghcr-24.10.r6     sros   24.10.r6   admin                   57400
+eda         sros-ghcr-25.3.r2      sros   25.3.r2    admin                   57400
+eda         sros-ghcr-25.7.r1      sros   25.7.r1    admin                   57400
+### customresourcedefinition.apiextensions.k8s.io/nodesecurityprofiles.core.eda.nokia.com ###
+NAMESPACE    NAME                        AGE
+eda-system   insecure                    5h16m
+eda-system   managed-tls                 5h16m
+eda-system   unmanaged-tls               5h16m
+eda-system   unmanaged-tls-skip-verify   5h16m
+### customresourcedefinition.apiextensions.k8s.io/nodeusers.core.eda.nokia.com ###
+NAMESPACE   NAME    USERNAME   AGE
+eda         admin   admin      5h16m
+### customresourcedefinition.apiextensions.k8s.io/nodeuserstates.aaa.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/ntpclients.timing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/ntpclientstates.timing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/orders.acme.cert-manager.io ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/pings.oam.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/policyattachments.qos.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/policydeployments.qos.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/policydeployments.routingpolicies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/policys.routingpolicies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/powersupplies.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/prefixsetdeployments.routingpolicies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/prefixsets.routingpolicies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/queues.qos.eda.nokia.com ###
+NAMESPACE   NAME        AGE
+eda         pfc-0       5h16m
+eda         pfc-1       5h16m
+eda         pfc-2       5h16m
+eda         pfc-3       5h16m
+eda         pfc-4       5h16m
+eda         pfc-5       5h16m
+eda         pfc-6       5h16m
+eda         pfc-7       5h16m
+eda         pfc-8       5h16m
+eda         unicast-0   5h16m
+eda         unicast-1   5h16m
+eda         unicast-2   5h16m
+eda         unicast-3   5h16m
+eda         unicast-4   5h16m
+eda         unicast-5   5h16m
+eda         unicast-6   5h16m
+eda         unicast-7   5h16m
+eda         unicast-8   5h16m
+### customresourcedefinition.apiextensions.k8s.io/registries.appstore.eda.nokia.com ###
+NAMESPACE    NAME                REMOTEURL   MIRROR   REACHABLE
+eda-system   eda-apps-registry   ghcr.io              true
+### customresourcedefinition.apiextensions.k8s.io/resourcegroups.kpt.dev ###
+NAMESPACE    NAME                 AGE
+default      inventory-02787113   5h24m
+default      inventory-39767176   5h23m
+default      inventory-74697068   5h16m
+default      inventory-87134123   5h25m
+eda-system   inventory-07111481   5h23m
+eda-system   inventory-14813011   5h24m
+eda-system   inventory-34592335   5h24m
+eda-system   inventory-45934147   5h24m
+eda-system   inventory-57979626   5h25m
+eda-system   inventory-65580793   5h23m
+eda-system   inventory-98309264   5h23m
+### customresourcedefinition.apiextensions.k8s.io/roles.core.eda.nokia.com ###
+NAMESPACE            NAME                                             CREATED AT
+cert-manager         cert-manager-tokenrequest                        2025-11-25T10:41:01Z
+cert-manager         cert-manager-webhook:dynamic-serving             2025-11-25T10:41:01Z
+eda-system           trust-manager                                    2025-11-25T10:41:33Z
+eda-system           trust-manager:leaderelection                     2025-11-25T10:41:33Z
+kube-public          kubeadm:bootstrap-signer-clusterinfo             2025-11-25T10:39:25Z
+kube-public          system:controller:bootstrap-signer               2025-11-25T10:39:25Z
+kube-system          cert-manager-cainjector:leaderelection           2025-11-25T10:41:00Z
+kube-system          cert-manager:leaderelection                      2025-11-25T10:41:00Z
+kube-system          extension-apiserver-authentication-reader        2025-11-25T10:39:25Z
+kube-system          kube-proxy                                       2025-11-25T10:39:26Z
+kube-system          kubeadm:kubelet-config                           2025-11-25T10:39:25Z
+kube-system          kubeadm:nodes-kubeadm-config                     2025-11-25T10:39:25Z
+kube-system          system::leader-locking-kube-controller-manager   2025-11-25T10:39:25Z
+kube-system          system::leader-locking-kube-scheduler            2025-11-25T10:39:25Z
+kube-system          system:controller:bootstrap-signer               2025-11-25T10:39:25Z
+kube-system          system:controller:cloud-provider                 2025-11-25T10:39:25Z
+kube-system          system:controller:token-cleaner                  2025-11-25T10:39:25Z
+local-path-storage   local-path-provisioner-role                      2025-11-25T10:39:29Z
+metallb-system       controller                                       2025-11-25T10:39:47Z
+metallb-system       pod-lister                                       2025-11-25T10:39:47Z
+### customresourcedefinition.apiextensions.k8s.io/routedinterfaces.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/routedinterfacestates.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/routelookups.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/routerdeployments.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/routereflectorclients.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/routereflectorclientstates.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/routereflectors.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/routereflectorstates.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/routers.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/routerstates.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/setupenvs.environment.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/simlinks.core.eda.nokia.com ###
+NAMESPACE   NAME                 AGE
+eda         leaf1-2-e1212        5h16m
+eda         leaf1-e1011          5h16m
+eda         leaf1-ethernet-1-3   5h16m
+eda         leaf1-ethernet-1-4   5h16m
+eda         leaf1-ethernet-1-5   5h16m
+eda         leaf1-ethernet-1-6   5h16m
+eda         leaf1-ethernet-1-7   5h16m
+eda         leaf1-ethernet-1-8   5h16m
+eda         leaf1-ethernet-1-9   5h16m
+eda         leaf1-spine1-1       5h16m
+eda         leaf1-spine1-2       5h16m
+eda         leaf2-e1011          5h16m
+eda         leaf2-ethernet-1-3   5h16m
+eda         leaf2-ethernet-1-4   5h16m
+eda         leaf2-ethernet-1-5   5h16m
+eda         leaf2-ethernet-1-6   5h16m
+eda         leaf2-ethernet-1-7   5h16m
+eda         leaf2-ethernet-1-8   5h16m
+eda         leaf2-ethernet-1-9   5h16m
+eda         leaf2-spine1-1       5h16m
+eda         leaf2-spine1-2       5h16m
+### customresourcedefinition.apiextensions.k8s.io/simnodes.core.eda.nokia.com ###
+NAMESPACE   NAME              AGE
+eda         leaf1             5h16m
+eda         leaf2             5h16m
+eda         spine1            5h16m
+eda         testman-default   5h16m
+### customresourcedefinition.apiextensions.k8s.io/stateconfigs.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/staticroutes.protocols.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/subnetallocationpools.core.eda.nokia.com ###
+NAMESPACE   NAME               AGE
+eda         demo-subnet-pool   5h16m
+eda         ipv4-pool          5h16m
+eda         ipv6-pool          5h16m
+### customresourcedefinition.apiextensions.k8s.io/systeminterfaces.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/systeminterfacestates.routing.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/targetnodes.core.eda.nokia.com ###
+NAMESPACE   NAME     NODESECURITYPROFILE   STATUS   DHCP   ADDRESS       PORT
+eda         leaf1    managed-tls           Ready           10.244.0.36   57400
+eda         leaf2    managed-tls           Ready           10.244.0.35   57400
+eda         spine1   managed-tls           Ready           10.244.0.34   57400
+### customresourcedefinition.apiextensions.k8s.io/techsupports.oam.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/thresholds.oam.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/thresholds.platformmetrics.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/topobreakouts.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/topolinkmonitors.topologies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/topolinks.core.eda.nokia.com ###
+NAMESPACE   NAME                 AGE
+eda         leaf1-2-e1212        5h16m
+eda         leaf1-e1011          5h16m
+eda         leaf1-ethernet-1-3   5h16m
+eda         leaf1-ethernet-1-4   5h16m
+eda         leaf1-ethernet-1-5   5h16m
+eda         leaf1-ethernet-1-6   5h16m
+eda         leaf1-ethernet-1-7   5h16m
+eda         leaf1-ethernet-1-8   5h16m
+eda         leaf1-ethernet-1-9   5h16m
+eda         leaf1-spine1-1       5h16m
+eda         leaf1-spine1-2       5h16m
+eda         leaf2-e1011          5h16m
+eda         leaf2-ethernet-1-3   5h16m
+eda         leaf2-ethernet-1-4   5h16m
+eda         leaf2-ethernet-1-5   5h16m
+eda         leaf2-ethernet-1-6   5h16m
+eda         leaf2-ethernet-1-7   5h16m
+eda         leaf2-ethernet-1-8   5h16m
+eda         leaf2-ethernet-1-9   5h16m
+eda         leaf2-spine1-1       5h16m
+eda         leaf2-spine1-2       5h16m
+### customresourcedefinition.apiextensions.k8s.io/topolinkstates.topologies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/topologies.topologies.eda.nokia.com ###
+NAMESPACE    NAME       AGE
+eda-system   physical   5h16m
+### customresourcedefinition.apiextensions.k8s.io/topologygroupings.topologies.eda.nokia.com ###
+NAMESPACE    NAME   AGE
+eda-system   role   5h16m
+### customresourcedefinition.apiextensions.k8s.io/toponodes.core.eda.nokia.com ###
+NAMESPACE   NAME     PLATFORM       VERSION   OS    ONBOARDED   MODE     NPP         NODE     AGE
+eda         leaf1    7220 IXR-D3L   25.7.2    srl   true        normal   Connected   Synced   5h16m
+eda         leaf2    7220 IXR-D3L   25.7.2    srl   true        normal   Connected   Synced   5h16m
+eda         spine1   7220 IXR-D5    25.7.2    srl   true        normal   Connected   Synced   5h16m
+### customresourcedefinition.apiextensions.k8s.io/trafficrateoverlays.topologies.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/transactionresults.core.eda.nokia.com ###
+NAMESPACE    NAME                    RESULT   AGE     DRYRUN   DESCRIPTION
+eda-system   transaction-000000001   OK       5h22m            startup - loading embedded manifests
+eda-system   transaction-000000002   OK       5h22m            startup - namespaces
+eda-system   transaction-000000003   OK       5h22m            startup - final load
+eda-system   transaction-000000004   OK       5h22m
+eda-system   transaction-000000005   OK       5h17m            transaction [user: workflow - 21 objects] [workflow 1] Installing  App: aaa.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: aifabrics.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: bootstrap.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: components.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: config.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: environment.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: interfaces.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: protocols.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: filters.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: os.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: qos.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: routing.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: routingpolicies.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: services.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: siteinfo.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: system.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: timing.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: fabrics.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: oam.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: security.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps) App: topologies.eda.nokia.com: v4.0.2 (catalog=eda-catalog-builtin-apps)
+eda-system   transaction-000000006   OK       5h16m
+eda-system   transaction-000000007   OK       5h16m
+eda-system   transaction-000000008   Failed   5h16m
+eda-system   transaction-000000009   OK       5h16m
+eda-system   transaction-000000010   OK       5h16m
+eda-system   transaction-000000011   OK       5h16m
+eda-system   transaction-000000012   OK       5h16m
+eda-system   transaction-000000013   OK       5h16m
+eda-system   transaction-000000014   OK       5h16m
+eda-system   transaction-000000015   OK       5h16m
+eda-system   transaction-000000016   OK       5h16m
+eda-system   transaction-000000017   OK       5h16m
+eda-system   transaction-000000018   OK       5h16m
+eda-system   transaction-000000019   OK       5h16m
+eda-system   transaction-000000020   OK       5h16m
+eda-system   transaction-000000021   OK       5h16m
+eda-system   transaction-000000022   OK       5h16m
+eda-system   transaction-000000023   OK       5h16m
+eda-system   transaction-000000024   OK       5h16m
+eda-system   transaction-000000025   OK       5h16m
+eda-system   transaction-000000026   OK       5h16m
+eda-system   transaction-000000027   OK       5h16m
+eda-system   transaction-000000028   OK       5h16m
+eda-system   transaction-000000029   OK       5h16m
+eda-system   transaction-000000030   OK       5h16m
+eda-system   transaction-000000031   OK       5h16m
+eda-system   transaction-000000032   OK       5h16m
+eda-system   transaction-000000033   Failed   5h16m
+eda-system   transaction-000000034   Failed   5h16m
+eda-system   transaction-000000035   Failed   5h16m
+eda-system   transaction-000000036   Failed   5h16m
+eda-system   transaction-000000037   Failed   5h16m
+eda-system   transaction-000000038   Failed   5h16m
+eda-system   transaction-000000039   OK       5h16m
+eda-system   transaction-000000040   OK       5h15m
+eda-system   transaction-000000041   OK       5h15m
+eda-system   transaction-000000042   OK       5h15m
+eda-system   transaction-000000043   OK       5h14m
+eda-system   transaction-000000044   OK       5h13m
+eda-system   transaction-000000045   OK       5h13m
+eda-system   transaction-000000046   OK       34m
+### customresourcedefinition.apiextensions.k8s.io/transactions.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/udpproxies.core.eda.nokia.com ###
+NAMESPACE    NAME        PROXY PORT   DEST HOST    DEST PORT
+eda-system   eda-dhcp    67           eda-dhcp     67
+eda-system   eda-dhcp6   547          eda-dhcpv6   547
+### customresourcedefinition.apiextensions.k8s.io/userdeployments.aaa.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/virtualnetworks.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/virtualnetworkstates.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/vlans.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/vlanstates.services.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/volumeoverlays.components.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/waitforinputs.core.eda.nokia.com ###
+No resources found
+### customresourcedefinition.apiextensions.k8s.io/workflowdefinitions.core.eda.nokia.com ###
+NAMESPACE    NAME                                 IMAGE                                                                        AGE
+eda-system   app-installer                        ghcr.io/nokia-eda/core/appstore-flow:25.8.3                                  5h22m
+eda-system   environment-cliplugin-gvk            ghcr.io/nokia-eda/workflows/workflow-environment-cliplugin:v4.0.2            5h17m
+eda-system   environment-env-gvk                  ghcr.io/nokia-eda/workflows/workflow-environment-env:v4.0.2                  5h17m
+eda-system   fabrics-islping                      ghcr.io/nokia-eda/workflows/workflow-fabrics-islping:v4.0.2                  5h17m
+eda-system   interfaces-checkinterfaces-gvk       ghcr.io/nokia-eda/workflows/workflow-interfaces-checkinterfaces:v4.0.2       5h17m
+eda-system   oam-ping-gvk                         ghcr.io/nokia-eda/workflows/workflow-oam-ping:v4.0.2                         5h17m
+eda-system   oam-techsupport-gvk                  ghcr.io/nokia-eda/workflows/workflow-oam-techsupport:v4.0.2                  5h17m
+eda-system   operatingsystem-image-gvk            ghcr.io/nokia-eda/workflows/workflow-operatingsystem-image:v4.0.2            5h17m
+eda-system   protocols-checkdefaultbgppeers-gvk   ghcr.io/nokia-eda/workflows/workflow-protocols-checkdefaultbgppeers:v4.0.2   5h17m
+eda-system   routing-attachmentlookup             ghcr.io/nokia-eda/workflows/workflow-routing-attachmentlookup:v4.0.2         5h17m
+eda-system   routing-routelookup                  ghcr.io/nokia-eda/workflows/workflow-routing-routelookup:v4.0.2              5h17m
+eda-system   services-edgeping-gvk                ghcr.io/nokia-eda/workflows/workflow-services-edgeping:v4.0.2                5h17m
+### customresourcedefinition.apiextensions.k8s.io/workflows.core.eda.nokia.com ###
+No resources found
+clab@C-5CG53743Q8:~/playground$
