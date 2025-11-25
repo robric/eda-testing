@@ -314,3 +314,68 @@ root@eda-npp-1:/opt/srlinux/bin$
 
 ```
 
+Let's try fabric configuration from this [example](https://docs.eda.dev/25.4/getting-started/units-of-automation/#__tabbed_1_1)
+
+```
+clab@C-5CG53743Q8:~/playground$ kubectl get -n eda Fabric -o yaml
+apiVersion: v1
+items:
+- apiVersion: fabrics.eda.nokia.com/v1alpha1
+  kind: Fabric
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"fabrics.eda.nokia.com/v1alpha1","kind":"Fabric","metadata":{"annotations":{},"name":"myfabric-1","namespace":"eda"},"spec":{"interSwitchLinks":{"linkSelector":["eda.nokia.com/role=interSwitch"],"unnumbered":"IPV6"},"leafs":{"leafNodeSelector":["eda.nokia.com/role=leaf"]},"overlayProtocol":{"protocol":"EBGP"},"spines":{"spineNodeSelector":["eda.nokia.com/role=spine"]},"systemPoolIPV4":"systemipv4-pool","underlayProtocol":{"bgp":{"asnPool":"asn-pool"},"protocol":["EBGP"]}}}
+    creationTimestamp: "2025-11-25T15:31:56Z"
+    generation: 1
+    name: myfabric-1
+    namespace: eda
+    resourceVersion: "38018"
+    uid: 25889dde-0b50-4d8d-bd3b-192af7b84ac5
+  spec:
+    interSwitchLinks:
+      linkSelector:
+      - eda.nokia.com/role=interSwitch
+      unnumbered: IPV6
+    leafs:
+      leafNodeSelector:
+      - eda.nokia.com/role=leaf
+    overlayProtocol:
+      protocol: EBGP
+    spines:
+      spineNodeSelector:
+      - eda.nokia.com/role=spine
+    systemPoolIPV4: systemipv4-pool
+    underlayProtocol:
+      bgp:
+        asnPool: asn-pool
+      protocol:
+      - EBGP
+  status:
+    borderLeafNodes: []
+    health: 100
+    healthScoreReason: |
+      Breakdown:
+      Metric "ISL Health", weight: 1, score: 100, calculation method: divide
+      Metric "DefaultRouter Health", weight: 1, score: 100, calculation method: divide
+    lastChange: "2025-11-25T15:32:09.000Z"
+    leafNodes:
+    - node: leaf1
+      operatingSystem: srl
+      operatingSystemVersion: 25.7.2
+      underlayAutonomousSystem: 100
+    - node: leaf2
+      operatingSystem: srl
+      operatingSystemVersion: 25.7.2
+      underlayAutonomousSystem: 102
+    operationalState: up
+    spineNodes:
+    - node: spine1
+      operatingSystem: srl
+      operatingSystemVersion: 25.7.2
+      underlayAutonomousSystem: 101
+    superSpineNodes: []
+kind: List
+metadata:
+
+```
