@@ -515,9 +515,7 @@ root@eda-demo-control-plane:/#
 ```
 ### Testing 
 
-1. Load topology (make script)
-
-The demo topology can be pre-loaded via make. This populates the eda-topology config map with node and links.
+The following topology is pre-loaded with make try-eda.
 
 <img width="836" height="454" alt="image" src="https://github.com/user-attachments/assets/b841d8db-33c0-4aef-af1a-7e462c3b2aff" />
 
@@ -641,5 +639,28 @@ Welcome to the Nokia SR Linux CLI.
 
 --{ + running }--[  ]--
 A:admin@leaf1#
+```
+
+Inspection of gnmi (grpc Network Management Interface) from npp on port 57400. npp agent pods are connected to all routers. Sessions is load shared between npp-0 and npp-1.
+
+```
+root@eda-demo-control-plane:/# kubectl get pods -o wide -A | grep cx
+eda-system           cx-eda--leaf1-sim-65bcb67766-fwjcm               2/2     Running   0          161m   10.244.0.36   eda-demo-control-plane   <none>           <none>
+eda-system           cx-eda--leaf2-sim-74645ff576-q76cv               2/2     Running   0          161m   10.244.0.35   eda-demo-control-plane   <none>           <none>
+eda-system           cx-eda--spine1-sim-ccd9976f-t75kr                2/2     Running   0          161m   10.244.0.34   eda-demo-control-plane   <none>           <none>
+root@eda-demo-control-plane:/# kubectl exec -it -n eda-system eda-npp-0 -- ss -laptnu | grep 57400
+tcp   ESTAB  0      0      [::ffff:10.244.0.37]:33284  [::ffff:10.244.0.35]:57400 users:(("sr_npp",pid=70,fd=35))
+tcp   ESTAB  0      0      [::ffff:10.244.0.37]:56220  [::ffff:10.244.0.36]:57400 users:(("sr_npp",pid=70,fd=49))
+root@eda-demo-control-plane:/#
+root@eda-demo-control-plane:/# kubectl exec -it -n eda-system eda-npp-1 -- ss -laptnu | grep 57400
+tcp   ESTAB  0      0      [::ffff:10.244.0.38]:39802  [::ffff:10.244.0.34]:57400 users:(("sr_npp",pid=70,fd=35))
+
+#### Question: can't establish sessions via gnmic ?
+
+root@eda-npp-1:/opt/srlinux/bin$ gnmic -a 10.244.0.36:57400   --tls-ca /var/run/eda/tls/internal/trust/trust-bundle.pem   --tls-cert /var/run/eda/tls/internal/client/tls.crt   --tls-key /var/run/eda/tls/internal/client/tls.key   capabilities
+^C
+received signal 'interrupt'. terminating...
+root@eda-npp-1:/opt/srlinux/bin$
+
 ```
 
