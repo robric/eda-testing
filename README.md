@@ -565,7 +565,7 @@ data:
 
 ```
 
-Check the nodes. Note that NPP is disconnected.
+Check the nodes. Note that NPP is disconnected. This is not good. I tried many things, but couldn't spot the issue (looks like npp can't reach CX switches ? might be TLS-related  ?) .
 
 ```
 root@eda-demo-control-plane:/# kubectl get -n eda toponodes
@@ -600,3 +600,22 @@ leaf2-spine1-2       145m
 root@eda-demo-control-plane:/# k
 ```
 
+OK something went wrong ( probably messed up with reactivating zscaler security too early ?). Let's restart the install:
+
+```
+make teardown-cluster
+rm -rf eda-kpt
+export EXT_DOMAIN_NAME=localhost
+make try-eda
+```
+
+Now it works !
+
+```
+root@eda-demo-control-plane:/# kubectl get toponodes -A
+NAMESPACE   NAME     PLATFORM       VERSION   OS    ONBOARDED   MODE     NPP         NODE     AGE
+eda         leaf1    7220 IXR-D3L   25.7.2    srl   true        normal   Connected   Synced   4m34s
+eda         leaf2    7220 IXR-D3L   25.7.2    srl   true        normal   Connected   Synced   4m34s
+eda         spine1   7220 IXR-D5    25.7.2    srl   true        normal   Connected   Synced   4m34s
+root@eda-demo-control-plane:/# 
+```
