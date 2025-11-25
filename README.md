@@ -619,3 +619,27 @@ eda         leaf2    7220 IXR-D3L   25.7.2    srl   true        normal   Connect
 eda         spine1   7220 IXR-D5    25.7.2    srl   true        normal   Connected   Synced   4m34s
 root@eda-demo-control-plane:/# 
 ```
+
+You can connect to cli of the emulated devices from k8s (admin/NokiaSrl1!).
+
+```
+root@eda-demo-control-plane:/# kubectl get pods -A| grep sim
+eda-system           cx-eda--leaf1-sim-65bcb67766-fwjcm               2/2     Running   0          75m
+eda-system           cx-eda--leaf2-sim-74645ff576-q76cv               2/2     Running   0          75m
+eda-system           cx-eda--spine1-sim-ccd9976f-t75kr                2/2     Running   0          75m
+eda-system           cx-eda--testman-default-sim-78dc8b8495-csj5l     2/2     Running   0          75m
+root@eda-demo-control-plane:/#
+
+root@eda-demo-control-plane:/# kubectl exec -it cx-eda--leaf1-sim-65bcb67766-fwjcm -n eda-system -- ssh admin@localhost
+Defaulted container "leaf1" out of: leaf1, cxdp
+admin@localhost's password:
+Last login: Tue Nov 25 12:02:10 2025 from ::1
+
+
+Loading environment configuration file(s): ['/etc/opt/srlinux/srlinux.rc']
+Welcome to the Nokia SR Linux CLI.
+
+--{ + running }--[  ]--
+A:admin@leaf1#
+```
+
