@@ -51,7 +51,25 @@ After some time
           https://C-5CG53743Q8.localdomain:9443
 --> INFO: EDA is launched
 ```
-And that's all !
+And that's all, this is installed. However, this is kubecentric, it is a good idea to add the path for kubectl in the WSL instance.
+
+```
+clab@C-5CG53743Q8:~/playground$ cd
+clab@C-5CG53743Q8:~$ echo 'export PATH=$PATH:/home/clab/playground/tools/' >> ~/.bashrc
+clab@C-5CG53743Q8:~$ source .bashrc
+clab@C-5CG53743Q8:~$ kubectl version
+Client Version: v1.33.1
+Kustomize Version: v5.6.0
+Server Version: v1.33.1
+clab@C-5CG53743Q8:~$
+```
+
+Interestingly with this install, k9s is already there too.
+
+``
+clab@C-5CG53743Q8:~/playground$ k9s
+`` 
+<img width="630" height="320" alt="image" src="https://github.com/user-attachments/assets/6ce1e160-2226-405c-b359-3b6fda1e0172" />
 
 ## Overview
 
