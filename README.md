@@ -3,6 +3,7 @@
 ## Installation (Windows Laptop)
 
 Source mostly derived https://docs.eda.dev/25.4/software-install/non-production/wsl/ and related links + chatgpt :-)
+Long story short: this is a no-brainer and works out of the box. Nokia made it very easy to try with the makefile . 
 
 ### Zscaler skip
 
@@ -51,18 +52,20 @@ After some time
           https://C-5CG53743Q8.localdomain:9443
 --> INFO: EDA is launched
 ```
-And that's all, this is installed. However, this is kubecentric, it is a good idea to add the path for kubectl in the WSL instance.
+And that's all, this is installed. 
+Notwithstanding, it is a good idea to add the path for kubectl in the WSL instance and edactl which is a handy wrapper to interact with the system.
 
 ```
-clab@C-5CG53743Q8:~/playground$ cd
-clab@C-5CG53743Q8:~$ echo 'export PATH=$PATH:/home/clab/playground/tools/' >> ~/.bashrc
-clab@C-5CG53743Q8:~$ source .bashrc
-clab@C-5CG53743Q8:~$ kubectl version
-Client Version: v1.33.1
-Kustomize Version: v5.6.0
-Server Version: v1.33.1
-clab@C-5CG53743Q8:~$
+cd
+echo 'export PATH=$PATH:/home/clab/playground/tools/' >> ~/.bashrc
+echo "source <(kubectl completion bash)" >>.bashrc
+echo "alias edactl='kubectl -n eda-system exec -it $(kubectl -n eda-system get pods \
+-l eda.nokia.com/app=eda-toolbox -o jsonpath="{.items[0].metadata.name}") \
+-- edactl'" >>.bashrc
+source .bashrc
 ```
+
+### Install Adds-on
 
 Interestingly with this install, k9s is already there too.
 
