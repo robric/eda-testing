@@ -53,15 +53,20 @@ After some time
 --> INFO: EDA is launched
 ```
 And that's all, this is installed. 
-Notwithstanding, it is a good idea to add the path for kubectl in the WSL instance and edactl which is a handy wrapper to interact with the system.
+
+### Customization
+
+The line below permits to 
+- access kubectl in the WSL instance (PATH)
+- edactl a handy wrapper to interact with the system
+- e9s 
 
 ```
 cd
 echo 'export PATH=$PATH:/home/clab/playground/tools/' >> ~/.bashrc
 echo "source <(kubectl completion bash)" >>.bashrc
-echo "alias edactl='kubectl -n eda-system exec -it $(kubectl -n eda-system get pods \
--l eda.nokia.com/app=eda-toolbox -o jsonpath="{.items[0].metadata.name}") \
--- edactl'" >>.bashrc
+echo "alias edactl='kubectl -n eda-system exec -it \$(kubectl -n eda-system get pods -l eda.nokia.com/app=eda-toolbox -o jsonpath=\"{.items[0].metadata.name}\") -- edactl'" >> ~/.bashrc
+echo "alias e9s='kubectl -n eda-system exec -it \$(kubectl -n eda-system get pods -l eda.nokia.com/app=eda-toolbox -o jsonpath=\"{.items[0].metadata.name}\") -- sh -c \"TERM=xterm-256color e9s\"'" >> ~/.bashrc
 source .bashrc
 ```
 
