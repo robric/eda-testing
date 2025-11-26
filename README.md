@@ -408,7 +408,8 @@ metadata:
 
 ### View result
 
-edactl command is very practical to fetch things from different components (kube-api, nodes, git...)
+- edactl command is very practical to fetch things from different components (kube-api, nodes, git...)
+- e9s shows a dashboard a la k9s
 
 ```
 clab@C-5CG53743Q8:~$ edactl get -n eda toponodes
@@ -430,3 +431,5 @@ interface ethernet-1/1 {
 clab@C-5CG53743Q8:~$
 [...]
 ```
+
+<img width="700" height="252" alt="image" src="https://github.com/user-attachments/assets/3821476d-5779-4700-aa4a-a5a9585091fd" />
