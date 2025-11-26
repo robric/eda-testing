@@ -72,11 +72,12 @@ source .bashrc
 
 ### Install Adds-on
 
-Interestingly with this install, k9s is already there too.
+Interestingly with this install, k9s is natively there too.
 
 ``
 clab@C-5CG53743Q8:~/playground$ k9s
 `` 
+
 <img width="630" height="320" alt="image" src="https://github.com/user-attachments/assets/6ce1e160-2226-405c-b359-3b6fda1e0172" />
 
 ## Overview
@@ -432,4 +433,4 @@ clab@C-5CG53743Q8:~$
 [...]
 ```
 
-<img width="700" height="252" alt="image" src="https://github.com/user-attachments/assets/3821476d-5779-4700-aa4a-a5a9585091fd" />
+<img width="1000" height="350" alt="image" src="https://github.com/user-attachments/assets/3821476d-5779-4700-aa4a-a5a9585091fd" />
