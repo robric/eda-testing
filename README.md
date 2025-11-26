@@ -184,7 +184,7 @@ root@eda-demo-control-plane:/#
 
 
 ```
-### Testing 
+### Testing / Fabric config
 
 The following topology is pre-loaded with make try-eda.
 
@@ -399,4 +399,29 @@ items:
 kind: List
 metadata:
 
+```
+
+### View result
+
+edactl command is very practical to fetch things from different components (kube-api, nodes, git...)
+
+```
+clab@C-5CG53743Q8:~$ edactl get -n eda toponodes
+NAME     PLATFORM       VERSION   OS    ONBOARDED   MODE     NPP         NODE
+leaf1    7220 IXR-D3L   25.7.2    srl   true        normal   Connected   Synced
+leaf2    7220 IXR-D3L   25.7.2    srl   true        normal   Connected   Synced
+spine1   7220 IXR-D5    25.7.2    srl   true        normal   Connected   Synced
+clab@C-5CG53743Q8:~$ edactl node get-config leaf1 -n eda | head
+interface ethernet-1/1 {
+    admin-state enable
+    subinterface 0 {
+        admin-state enable
+        ipv6 {
+            admin-state enable
+            router-advertisement {
+                router-role {
+                    admin-state enable
+                    max-advertisement-interval 10
+clab@C-5CG53743Q8:~$
+[...]
 ```
