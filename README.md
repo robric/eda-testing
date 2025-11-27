@@ -461,7 +461,9 @@ sudo update-ca-certificates
 2. Access the API.
 
 The following steps are all captured in a script located [here](src/explore-api.sh)
+- keycloak auth
+- get client uuid
+- get secret and token
+- api calls
+The result is captured [here](assets/eda-api-access.log)
 
-2.1 Keycloak 
-
-2.2 
