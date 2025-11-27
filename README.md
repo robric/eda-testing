@@ -448,8 +448,8 @@ To access the API via WSL:
 1.1 Export the certificate from your browser while connecting to the EDA UI 
 
 
-![find certificate](assets/image.png)
-![export certificate](image.png)
+![find certificate](assets/image-cert.png)
+![export certificate](assets/image-export.png)
 
 1.2 copy the certificate to WSL and update certificate list
 
@@ -458,4 +458,10 @@ sudo cp /mnt/c/Users/rirobert/certificate-eda-api.crt /usr/local/share/ca-certif
 sudo update-ca-certificates
 ```
 
-2. 
+2. Access the API.
+
+The following steps are all captured in a script located [here](src/explore-api.sh)
+
+2.1 Keycloak 
+
+2.2 
