@@ -488,6 +488,43 @@ gnmic -a 10.244.0.17 -u admin -p NokiaSrl1! --skip-verify \
   --encoding JSON_IETF
 target "10.244.0.17" get request failed: "10.244.0.17:57400" GetRequest failed: rpc error: code = InvalidArgument desc = Path not valid - unknown element 'state'. Options are [physical-channel, breakout-mode, statistics, traffic-rate, adapter, transceiver, ethernet, subinterface, sflow, lag, name, description, admin-state, mtu, loopback-mode, ifindex, oper-state, oper-down-reason, last-change, linecard, forwarding-complex, forwarding-mode, vlan-tagging, tpid]
 
+gnmic -a 10.244.0.17 -u admin -p NokiaSrl1! --skip-verify \
+  get --path "/interface[name=ethernet-1/1]" \
+  --encoding JSON_IETF
+[
+  {
+    "source": "10.244.0.17",
+    "timestamp": 1764710665217113952,
+    "time": "2025-12-02T21:24:25.217113952Z",
+    "updates": [
+      {
+        "Path": "srl_nokia-interfaces:interface[name=ethernet-1/1]",
+        "values": {
+          "srl_nokia-interfaces:interface": {
+            "admin-state": "disable",
+            "ethernet": {
+              "dac-link-training": false,
+              "flow-control": {
+                "receive": false
+              },
+              "forward-error-correction": {
+                "operational-host-if-fec": "disabled"
+              },
+              "hold-time": {
+                "down": 0,
+                "up": 0
+              },
+              "hw-mac-address": "02:52:CC:FF:00:01",
+              "lacp-port-priority": 32768,
+              "port-speed": "100G",
+              "srl_nokia-dot1x:dot1x": {
+                "srl_nokia-dot1x-tunneling:tunnel": {
+                  "oper-rule": "trap-to-cpu-untagged",
+                  "tunnel-all": false
+                }
+              },
+[...]
+
 This is indeed the same schema as state DB
 
 A:admin@leaf1# info interface ethernet-1/1
