@@ -470,26 +470,93 @@ The result is captured [here](assets/eda-api-access.log)
 
 ### SRlinux stuffs
 
-#### ndk
-
-'''
-set system ndk-server admin-state enable
-commit
-'''
-
-process sr_sdk_mgr brought up
-
-'''
-admin@leaf2:~$ sudo ss -lntp | grep 50053
-LISTEN 0      4096               *:50053            *:*    users:(("sr_sdk_mgr",pid=13900,fd=27))
-'''
-
 #### npp dig
 
 Schema from npp
-
 ```
  curl https://eda-asvr.eda-system.svc/eda-system/schemaprofiles/srlinux-ghcr-25.7.2/srlinux-25.7.2.zip /var/run/eda/tls/internal/client/tls.crt /var/run/eda/tls/internal/client/tls.key /var/run/eda/tls/internal/trust/trust-bundle.pem 2>&1
+```
+gnmi connection from npp and subscription
+
+```
+gnmic -a 10.244.0.17 -u admin -p NokiaSrl1! --skip-verify   capabilities
+
+
+-------------- event-based (default stream mode) 
+
+root@eda-npp-0:/opt/srlinux/protos/gnmi$ gnmic -a 10.244.0.17 -u admin -p NokiaSrl1! --skip-verify   subscribe --mode stream      --path "/interface[name=ethernet-1/1]/admin-state"   --encoding JSON_IETF
+
+{
+  "source": "10.244.0.17",
+  "subscription-name": "default-1764710148",
+  "timestamp": 1764710148996576638,
+  "time": "2025-12-02T21:15:48.996576638Z",
+  "updates": [
+    {
+      "Path": "srl_nokia-interfaces:interface[name=ethernet-1/1]",
+      "values": {
+        "srl_nokia-interfaces:interface": {
+          "admin-state": "enable"
+        }
+      }
+    }
+  ]
+}
+{
+  "source": "10.244.0.17",
+  "subscription-name": "default-1764710148",
+  "timestamp": 1764710176942242230,
+  "time": "2025-12-02T21:16:16.94224223Z",
+  "updates": [
+    {
+      "Path": "srl_nokia-interfaces:interface[name=ethernet-1/1]",
+      "values": {
+        "srl_nokia-interfaces:interface": {
+          "admin-state": "disable"
+        }
+      }
+    }
+  ]
+}
+
+-------------- polling  
+
+gnmic -a 10.244.0.17 -u admin -p NokiaSrl1! --skip-verify   subscribe --mode stream --stream-mode sample --sample-interval 5s   --path "/interface[name=ethernet-1/1]/statistics"   --encoding JSON_IETF
+
+{
+  "source": "10.244.0.17",
+  "subscription-name": "default-1764709996",
+  "timestamp": 1764709996581326032,
+  "time": "2025-12-02T21:13:16.581326032Z",
+  "updates": [
+    {
+      "Path": "srl_nokia-interfaces:interface[name=ethernet-1/1]/statistics",
+      "values": {
+        "srl_nokia-interfaces:interface/statistics": {
+          "carrier-transitions": "3",
+          "in-broadcast-packets": "0",
+          "in-discarded-packets": "0",
+          "in-error-packets": "0",
+          "in-fcs-error-packets": "0",
+          "in-multicast-packets": "1321",
+          "in-octets": "175974",
+          "in-packets": "1799",
+          "in-unicast-packets": "478",
+          "out-broadcast-packets": "0",
+          "out-discarded-packets": "0",
+          "out-error-packets": "0",
+          "out-mirror-octets": "0",
+          "out-mirror-packets": "0",
+          "out-multicast-packets": "1268",
+          "out-octets": "178426",
+          "out-packets": "1745",
+          "out-unicast-packets": "477"
+        }
+      }
+    }
+  ]
+}
+
 ```
 
 #### Process and Connections 
@@ -502,3 +569,115 @@ This is summarized in the below puml diagram.
 The results of bash commands used for this diagram (ss and ps) on leaf1 switch (simulated) is located [here.](assets/processes%20and%20connections.log)
 
 We can see the ubiquitous role of the Impart DB.
+
+Next, proto files and yang data models located her under /opt/srlinux/
+
+```
+[user@leaf1 srlinux]$ ls
+appmgr  bin  deviations  etc  eventmgr  imm  kexec  lib  mappings  models  osync  phy  protos  python  snmp  systemd  usr  var  version  ztp
+[user@leaf1 srlinux]$ cd protos/
+[user@leaf1 protos]$ ls
+gnmi  gnoi  gnsi  ndk  yang
+[user@leaf1 protos]$ cat gnmi/gnmi
+gnmi.proto      gnmi_ext.proto
+[user@leaf1 protos]$ ls ../models/
+authz_factory_authorization_policy.json  config.netconf_ipv6_port.json_snip  iana        srl_nokia
+config.gnmi_server.json_snip             config.ptp_ipv4_ports.json_snip     ietf        ztp_config.json.j2
+config.netconf_ipv4_port.json_snip       config.ptp_ipv6_ports.json_snip     openconfig  ztp_selected_interface.json.j2
+
+```
+
+#### ndk
+
+First, activate ndk on leaf switches via configlet from EDA.
+
+```
+kubectl apply -f - <<EOF
+apiVersion: config.eda.nokia.com/v1alpha1
+kind: Configlet
+metadata:
+  name: enable-ndk
+  namespace: eda
+spec:
+  endpointSelector:
+    - eda.nokia.com/role=leaf
+  operatingSystem: srl
+  configs:
+    - path: .system.ndk-server
+      operation: Create
+      config: |-
+        {
+          "admin-state": "enable"
+        }
+EOF
+```
+
+This works... first configlet successful !
+
+```
+clab@C-5CG53743Q8:~$ edactl node get-config -n eda leaf1 
+[...]
+    ndk-server {
+        admin-state enable
+    }
+
+admin@leaf2:~$ sudo ss -lntp | grep 50053
+LISTEN 0      4096               *:50053            *:*    users:(("sr_sdk_mgr",pid=13900,fd=27))
+'''
+
+Now, on Leaf1, create virtual env and install ndk 
+
+```
+sudo mkdir ndk-try
+cd ndk-try/
+python3 -m venv venv
+pip install srlinux-ndk
+```
+
+Explore the packages in ndk since dir(ndk) does not return much.
+
+````
+import pkgutil
+import ndk
+for m in pkgutil.iter_modules(ndk.__path__):
+  print(m.name)
+
+---- output
+appid_service_pb2
+appid_service_pb2_grpc
+bfd_service_pb2
+bfd_service_pb2_grpc
+config_service_pb2
+config_service_pb2_grpc
+interface_service_pb2
+interface_service_pb2_grpc
+lldp_service_pb2
+lldp_service_pb2_grpc
+networkinstance_service_pb2
+networkinstance_service_pb2_grpc
+nexthop_group_service_pb2
+nexthop_group_service_pb2_grpc
+route_service_pb2
+route_service_pb2_grpc
+sdk_common_pb2
+sdk_common_pb2_grpc
+sdk_service_pb2
+sdk_service_pb2_grpc
+telemetry_service_pb2
+telemetry_service_pb2_grpc
+----
+
+print(dir(sdk_service_pb2))
+
+----output 
+['AgentRegistrationRequest', 'AgentRegistrationResponse', 'AppIdRequest', 'AppIdResponse', 'DESCRIPTOR', 'KeepAliveRequest', 'KeepAliveResponse', 'Notification', 'NotificationQueryRequest', 'NotificationQueryResponse', 'NotificationQuerySubscription', 'NotificationRegisterRequest', 'NotificationRegisterResponse', 'NotificationStreamRequest', 'NotificationStreamResponse', '_AGENTREGISTRATIONREQUEST', '_AGENTREGISTRATIONRESPONSE', '_APPIDREQUEST', '_APPIDRESPONSE', '_KEEPALIVEREQUEST', '_KEEPALIVERESPONSE', '_NOTIFICATION', '_NOTIFICATIONQUERYREQUEST', '_NOTIFICATIONQUERYRESPONSE', '_NOTIFICATIONQUERYSUBSCRIPTION', '_NOTIFICATIONREGISTERREQUEST', '_NOTIFICATIONREGISTERREQUEST_OPERATION', '_NOTIFICATIONREGISTERRESPONSE', '_NOTIFICATIONSTREAMREQUEST', '_NOTIFICATIONSTREAMRESPONSE', '_SDKMGRSERVICE', '_SDKNOTIFICATIONSERVICE', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', '_builder', '_descriptor', '_descriptor_pool', '_globals', '_sym_db', '_symbol_database', 'ndk_dot_appid__service__pb2', 'ndk_dot_bfd__service__pb2', 'ndk_dot_config__service__pb2', 'ndk_dot_interface__service__pb2', 'ndk_dot_lldp__service__pb2', 'ndk_dot_networkinstance__service__pb2', 'ndk_dot_nexthop__group__service__pb2', 'ndk_dot_route__service__pb2', 'ndk_dot_sdk__common__pb2']
+
+print(dir(sdk_service_pb2_grpc))
+
+---- output
+['SdkMgrService', 'SdkMgrServiceServicer', 'SdkMgrServiceStub', 'SdkNotificationService', 'SdkNotificationServiceServicer', 'SdkNotificationServiceStub', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'add_SdkMgrServiceServicer_to_server', 'add_SdkNotificationServiceServicer_to_server', 'grpc', 'ndk_dot_sdk__service__pb2']
+----
+```
+
+```
+
