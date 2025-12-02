@@ -481,6 +481,23 @@ gnmi connection from npp and subscription
 ```
 gnmic -a 10.244.0.17 -u admin -p NokiaSrl1! --skip-verify   capabilities
 
+--------------- get (failed but you get the schema... )
+
+gnmic -a 10.244.0.17 -u admin -p NokiaSrl1! --skip-verify \
+  get --path "/interface[name=ethernet-1/1]/state/counters" \
+  --encoding JSON_IETF
+target "10.244.0.17" get request failed: "10.244.0.17:57400" GetRequest failed: rpc error: code = InvalidArgument desc = Path not valid - unknown element 'state'. Options are [physical-channel, breakout-mode, statistics, traffic-rate, adapter, transceiver, ethernet, subinterface, sflow, lag, name, description, admin-state, mtu, loopback-mode, ifindex, oper-state, oper-down-reason, last-change, linecard, forwarding-complex, forwarding-mode, vlan-tagging, tpid]
+
+This is indeed the same schema as state DB
+
+A:admin@leaf1# info interface ethernet-1/1
+    admin-state disable
+    mtu 9232
+    loopback-mode none
+    ifindex 16382
+    oper-state down
+    oper-down-reason port-admin-disabled
+[...]
 
 -------------- event-based (default stream mode) 
 
