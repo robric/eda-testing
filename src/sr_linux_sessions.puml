@@ -1,0 +1,178 @@
+@startuml SR_Linux_Process_Sessions
+
+!pragma horizontalLineBetweenDifferentPackageAllowed
+skinparam componentStyle rectangle
+skinparam linetype ortho
+left to right direction
+skinparam nodesep 10
+skinparam ranksep 20
+
+' Tier 1: Central Database (far left)
+package "Central Database" as tier1 {
+    [sr_idb_server\nPort: 50010] as idb #E1F5FF
+}
+
+' Left column packages
+together {
+    ' Tier 2: Core Infrastructure
+    package "Core Infrastructure" as tier2 {
+        [sr_device_mgr] as device #E1F5FF
+        [sr_xdp_lc\nPort: 50054] as xdp #E1F5FF
+        [sr_grpc_server\nPort: 55365] as grpc #E1F5FF
+        [sr_mgmt_server] as mgmt #E1F5FF
+        
+        device -[hidden]- xdp
+        xdp -[hidden]- grpc
+        grpc -[hidden]- mgmt
+    }
+
+    ' Tier 6: Network Services
+    package "Network Services" as tier6 {
+        [sr_sflow_sample\nPort: 58643] as sflow #FCE4EC
+        [sr_qos_mgr] as qos #FCE4EC
+        [sr_acl_mgr] as acl #FCE4EC
+        [sr_net_inst_mgr] as netinst #FCE4EC
+        [sr_plcy_mgr] as plcy #FCE4EC
+        [sr_stat_id_mgr] as stat #FCE4EC
+        [sr_app_mgr] as app #FCE4EC
+        
+        sflow -[hidden]- qos
+        qos -[hidden]- acl
+        acl -[hidden]- netinst
+        netinst -[hidden]- plcy
+        plcy -[hidden]- stat
+        stat -[hidden]- app
+    }
+}
+
+' Right column packages
+together {
+    ' Tier 3: Layer 2 Services
+    package "Layer 2 Services" as tier3 {
+        [sr_arp_nd_mgr\nPort: 57109] as arp #FFF3E0
+        [sr_l2_mac_learn\nPort: 59381] as l2mac #FFF3E0
+        [sr_l2_mac_mgr] as l2mgr #FFF3E0
+        [sr_lag_mgr\nPort: 55915] as lag #FFF3E0
+        [sr_lldp_mgr\nPort: 55627] as lldp #FFF3E0
+        
+        arp -[hidden]- l2mac
+        l2mac -[hidden]- l2mgr
+        l2mgr -[hidden]- lag
+        lag -[hidden]- lldp
+    }
+
+    ' Tier 4: Layer 3 Services
+    package "Layer 3 Services" as tier4 {
+        [sr_dhcp_client_mgr\nPort: 56547] as dhcp #E8F5E9
+        [sr_bfd_mgr\nPort: 59813] as bfd #E8F5E9
+        [sr_evpn_mgr] as evpn #E8F5E9
+        [sr_bgp_mgr] as bgp #E8F5E9
+        [sr_vxlan_mgr] as vxlan #E8F5E9
+        [sr_fib_mgr] as fib #E8F5E9
+        [sr_mfib_mgr] as mfib #E8F5E9
+        
+        dhcp -[hidden]- bfd
+        bfd -[hidden]- evpn
+        evpn -[hidden]- bgp
+        bgp -[hidden]- vxlan
+        vxlan -[hidden]- fib
+        fib -[hidden]- mfib
+    }
+
+    ' Tier 5: System Services
+    package "System Services" as tier5 {
+        [sr_linux_mgr] as linux #F3E5F5
+        [sr_log_mgr] as log #F3E5F5
+        [sr_mcid_mgr] as mcid #F3E5F5
+        [sr_license_mgr] as license #F3E5F5
+        [sr_chassis_mgr] as chassis #F3E5F5
+        [sr_radius_mgr] as radius #F3E5F5
+        [sr_aaa_mgr] as aaa #F3E5F5
+        
+        linux -[hidden]- log
+        log -[hidden]- mcid
+        mcid -[hidden]- license
+        license -[hidden]- chassis
+        chassis -[hidden]- radius
+        radius -[hidden]- aaa
+    }
+}
+
+' IDB to Core Infrastructure (Unix)
+idb -[#0000FF]-> device
+idb -[#0000FF]-> xdp
+idb -[#0000FF]-> grpc
+idb -[#0000FF]-> mgmt
+
+' IDB to Layer 2 (Unix)
+idb -[#0000FF]-> arp
+idb -[#0000FF]-> l2mac
+idb -[#0000FF]-> l2mgr
+idb -[#0000FF]-> lag
+idb -[#0000FF]-> lldp
+
+' IDB to Layer 3 (Unix)
+idb -[#0000FF]-> dhcp
+idb -[#0000FF]-> bfd
+idb -[#0000FF]-> evpn
+idb -[#0000FF]-> bgp
+idb -[#0000FF]-> vxlan
+idb -[#0000FF]-> fib
+idb -[#0000FF]-> mfib
+
+' IDB to System Services (Unix)
+idb -[#0000FF]-> linux
+idb -[#0000FF]-> log
+idb -[#0000FF]-> mcid
+idb -[#0000FF]-> license
+idb -[#0000FF]-> chassis
+idb -[#0000FF]-> radius
+idb -[#0000FF]-> aaa
+
+' IDB to Network Services (Unix)
+idb -[#0000FF]-> sflow
+idb -[#0000FF]-> qos
+idb -[#0000FF]-> acl
+idb -[#0000FF]-> netinst
+idb -[#0000FF]-> plcy
+idb -[#0000FF]-> stat
+
+' XDP TCP connections to Layer 2
+xdp -[#FF0000]-> arp
+xdp -[#FF0000]-> l2mac
+xdp -[#FF0000]-> lag
+xdp -[#FF0000]-> lldp
+
+' XDP TCP connections to Layer 3 & Network
+xdp -[#FF0000]-> dhcp
+xdp -[#FF0000]-> bfd
+xdp -[#FF0000]-> sflow
+
+' XDP TCP to self and GRPC
+xdp -[#FF0000]-> xdp
+xdp -[#FF0000]-> grpc
+
+' Cross-tier connections
+evpn -[#FF0000]-> arp
+device -[#0000FF]-> app
+mgmt -[#0000FF]-> aaa
+mgmt -[#0000FF]-> grpc
+aaa -[#0000FF]-> grpc
+
+note top of idb
+  **IDB Server - Central Database**
+  Unix sockets to all processes
+  (/opt/srlinux/var/run/sr_idb_server:50010)
+end note
+
+note bottom of xdp
+  **XDP Datapath**
+  TCP for control plane
+end note
+
+legend bottom
+  <color:#FF0000>━━━</color> TCP Connection
+  <color:#0000FF>━━━</color> Unix Socket
+endlegend
+
+@enduml

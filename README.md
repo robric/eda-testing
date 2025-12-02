@@ -407,7 +407,7 @@ metadata:
 
 ```
 
-### View result
+### edactl and e9s
 
 - edactl command is very practical to fetch things from different components (kube-api, nodes, git...)
 - e9s shows a dashboard a la k9s
@@ -465,5 +465,40 @@ The following steps are all captured in a script located [here](src/explore-api.
 - get client uuid
 - get secret and token
 - api calls
+
 The result is captured [here](assets/eda-api-access.log)
 
+### SRlinux stuffs
+
+#### ndk
+
+'''
+set system ndk-server admin-state enable
+commit
+'''
+
+process sr_sdk_mgr brought up
+
+'''
+admin@leaf2:~$ sudo ss -lntp | grep 50053
+LISTEN 0      4096               *:50053            *:*    users:(("sr_sdk_mgr",pid=13900,fd=27))
+'''
+
+#### npp dig
+
+Schema from npp
+
+```
+ curl https://eda-asvr.eda-system.svc/eda-system/schemaprofiles/srlinux-ghcr-25.7.2/srlinux-25.7.2.zip /var/run/eda/tls/internal/client/tls.crt /var/run/eda/tls/internal/client/tls.key /var/run/eda/tls/internal/trust/trust-bundle.pem 2>&1
+```
+
+#### Process and Connections 
+
+Now let's investigate the sr Linux processes and connections between. 
+This is summarized in the below puml diagram.
+
+ ![SR Linux Process Connections](assets/sr_linux_sim_connections.png)
+
+The results of bash commands used for this diagram (ss and ps) on leaf1 switch (simulated) is located [here.](assets/processes%20and%20connections.log)
+
+We can see the ubiquitous role of the Impart DB.

@@ -1,0 +1,369 @@
+[user@leaf1 /]$ ps aux
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+user           1  0.0  0.0   7468  3200 pts/0    Ss+  07:34   0:00 /bin/bash /init/entrypoint-embedcfg.sh
+root          91  0.0  0.0  15564  4548 ?        Ss   07:34   0:00 sshd: /usr/sbin/sshd [listener] 0 of 10-100 startups
+srlinux     1407  0.0  0.2 454540 39296 ?        Sl   07:35   0:06 ./sr_supportd --server-mode
+srlinux     1544  0.4  0.0  16692 10112 ?        S    07:35   1:08 top -b -d 600 -H -i -w 512
+root        1631  0.0  0.0   7732  3456 ?        S    07:35   0:00 /bin/bash /opt/srlinux/bin/sr_linux
+root        1642  0.0  0.0   8872  3840 ?        S    07:35   0:00 /usr/bin/sudo --non-interactive --preserve-env=SRL_CHASSIS_TYPE SRL_CARD_TYPE SR
+root        1643  0.0  0.0   8872  1472 pts/2    Ss+  07:35   0:00 /usr/bin/sudo --non-interactive --preserve-env=SRL_CHASSIS_TYPE SRL_CARD_TYPE SR
+root        1644  0.0  0.0  15180  7680 pts/2    S    07:35   0:00 runuser --user srlinux -- /opt/srlinux/bin/sr_linux --user-env-switched
+srlinux     1693  0.0  0.0   7724  3328 pts/2    S    07:35   0:00 /bin/bash /opt/srlinux/bin/sr_linux --user-env-switched
+srlinux     1877  0.0  0.6 202100 110208 pts/2   S    07:35   0:09 ./sr_app_mgr
+user        1887  0.0  0.0   5896  1536 pts/0    S+   07:35   0:00 sleep infinity
+srlinux     2160  0.2  1.2 2388304 194688 pts/2  Sl   07:35   0:31 ./sr_device_mgr
+srlinux     2227  0.1  0.4 123096 78832 pts/2    S    07:35   0:25 ./sr_idb_server
+srlinux     2264  0.1  0.7 223816 118784 pts/2   S    07:35   0:20 ./sr_lag_mgr
+srlinux     2284  0.0  0.6 194116 106368 pts/2   S    07:35   0:00 ./sr_log_mgr
+srlinux     2324  0.5  0.7 217920 124064 pts/2   S    07:35   1:16 ./sr_linux_mgr
+srlinux     2362  0.0  0.7 377708 116352 pts/2   Sl   07:35   0:04 ./sr_dhcp_client_mgr
+srlinux     2393  0.1  0.7 252416 117760 pts/2   Sl   07:35   0:23 ./sr_radius_mgr
+srlinux     2436  0.3  1.1 467312 180912 pts/2   Sl   07:35   0:44 ./sr_mgmt_server
+srlinux     2491  0.0  0.6 194300 104960 pts/2   S    07:35   0:00 ./sr_license_mgr
+srlinux     2529  0.0  0.6 197436 108928 pts/2   S    07:35   0:00 ./sr_mcid_mgr
+srlinux     2582 20.2  4.1 2977528 659940 pts/2  Sl   07:35  48:51 sr_xdp_lc_1 --slot_num 1 --complex_num 2
+srlinux     2627  0.0  0.6 205576 110208 pts/2   S    07:35   0:01 ./sr_mfib_mgr
+srlinux     2668  1.1  0.9 447776 147328 pts/2   Sl   07:35   2:48 ./sr_arp_nd_mgr
+srlinux     2696  0.6  0.7 3482296 125316 pts/2  Sl   07:35   1:37 ./sr_aaa_mgr
+srlinux     2733  0.0  0.6 198296 110592 pts/2   S    07:35   0:00 ./sr_l2_mac_mgr
+srlinux     2777  0.0  0.7 355424 114304 pts/2   Sl   07:35   0:00 ./sr_net_inst_mgr
+srlinux     2820  0.0  0.7 199844 113792 pts/2   S    07:35   0:00 ./sr_acl_mgr
+srlinux     2860  0.0  0.7 240224 125696 pts/2   S    07:35   0:00 ./sr_fib_mgr
+srlinux     2921  0.0  0.6 194864 104448 pts/2   S    07:35   0:00 ./sr_stat_id_mgr
+srlinux     2948  0.0  0.7 222972 118400 pts/2   S    07:35   0:08 ./sr_bfd_mgr
+srlinux     3000  0.0  0.6 197748 108032 pts/2   S    07:35   0:00 ./sr_l2_mac_learn_mgr
+srlinux     3022  0.1  0.7 216484 126992 pts/2   S    07:35   0:25 ./sr_chassis_mgr
+srlinux     3081  0.0  0.7 371076 117760 pts/2   Sl   07:35   0:09 ./sr_evpn_mgr
+srlinux     3135  0.0  0.7 221244 115712 pts/2   S    07:35   0:08 ./sr_sflow_sample_mgr
+root        3287  0.0  0.0  16380  8448 pts/2    S    07:35   0:00 /usr/bin/sudo -Enu root /usr/bin/sudo -Enu grpcrpc /usr/bin/bash -lc ./sr_grpc_s
+srlinux     3297  0.0  0.7 222408 118272 pts/2   S    07:35   0:01 ./sr_lldp_mgr
+root        3301  0.0  0.0  16380  1796 pts/3    Ss+  07:35   0:00 /usr/bin/sudo -Enu root /usr/bin/sudo -Enu grpcrpc /usr/bin/bash -lc ./sr_grpc_s
+root        3302  0.0  0.0  16448  8576 pts/3    S    07:35   0:00 /usr/bin/sudo -Enu grpcrpc /usr/bin/bash -lc ./sr_grpc_server
+srlinux     3318  0.0  0.7 224336 120064 pts/2   S    07:35   0:01 ./sr_plcy_mgr
+root        3330  0.0  0.0  16448  1800 pts/4    Ss+  07:35   0:00 /usr/bin/sudo -Enu grpcrpc /usr/bin/bash -lc ./sr_grpc_server
+grpcrpc     3335  0.7  0.9 4741036 153296 pts/4  Sl   07:35   1:43 ./sr_grpc_server
+srlinux     3361  0.0  0.7 200488 115480 pts/2   S    07:35   0:02 ./sr_qos_mgr
+srlinux     3422  0.0  0.6 197004 108800 pts/2   S    07:35   0:01 ./sr_vxlan_mgr
+root        3887  0.0  0.0  15440  3184 ?        Ss   07:35   0:00 sshd: /usr/sbin/sshd -f /etc/ssh/sshd_config_mgmt [listener] 0 of 20-20 startups
+srlinux     6133  5.3  0.9 444452 160108 pts/2   Sl   08:20  10:25 ./sr_bgp_mgr
+syslog      6272  0.0  0.0 229464  8464 ?        Ssl  08:20   0:01 /usr/sbin/rsyslogd -i /var/run/srlinux/rsyslogd.pid
+user        7077  0.0  0.0   8136  3968 pts/5    Ss   08:52   0:00 bash
+user        8524  100  0.0  28200  3200 pts/5    R    11:36   0:00 sendacct 3 0 7077 pts/5 ps aux
+user        8525  100  0.0  11528  4608 pts/5    R+   11:36   0:00 ps aux
+[user@leaf1 /]$
+
+[user@leaf1 /]$ sudo ss -lapn
+Netid    State        Recv-Q    Send-Q                                            Local Address:Port                       Peer Address:Port       Process
+nl       UNCONN       0         0                                                             0:32                                     *           
+nl       UNCONN       0         0                                                             0:0                                      *           
+nl       UNCONN       0         0                                                             0:-910367466                             *           
+nl       UNCONN       0         0                                                             0:144                                    *           
+nl       UNCONN       0         0                                                             0:2582                                   *           
+nl       UNCONN       0         0                                                             0:-2142973595                            *           
+nl       UNCONN       0         0                                                             0:-1528892368                            *           
+nl       UNCONN       0         0                                                             0:2777                                   *           
+nl       UNCONN       0         0                                                             0:-910367466                             *           
+nl       UNCONN       0         0                                                             0:2582                                   *           
+nl       UNCONN       0         0                                                             0:144                                    *           
+nl       UNCONN       0         0                                                             0:32                                     *           
+nl       UNCONN       896       0                                                             4:0                                      *           
+nl       UNCONN       4352      0                                                             4:8271                                   *           
+nl       UNCONN       0         0                                                             6:0                                      *           
+nl       UNCONN       0         0                                                             9:8250                                   *           
+nl       UNCONN       0         0                                                             9:3287                                   *           
+nl       UNCONN       0         0                                                             9:3302                                   *           
+nl       UNCONN       0         0                                                             9:0                                      *           
+nl       UNCONN       0         0                                                             9:1642                                   *           
+nl       UNCONN       0         0                                                            10:0                                      *           
+nl       UNCONN       0         0                                                            12:0                                      *           
+nl       UNCONN       0         0                                                            15:0                                      *           
+nl       UNCONN       0         0                                                            16:0                                      *           
+p_raw    UNCONN       0         0                                                             *:mgmt0-cx                               *           
+p_raw    UNCONN       31360     0                                                             *:monit_in                               *            users:(("sr_xdp_lc",pid=2582,fd=95))
+p_raw    UNCONN       0         0                                                             *:mgmt0                                  *            users:(("sr_xdp_lc",pid=2582,fd=117))
+p_raw    UNCONN       0         0                                                             *:gway-2800                              *            users:(("sr_xdp_lc",pid=2582,fd=128))
+p_raw    UNCONN       0         0                                                             *:mgmt0-0                                *            users:(("sr_xdp_lc",pid=2582,fd=129))
+p_raw    UNCONN       0         0                                                             *:gway-2801                              *            users:(("sr_xdp_lc",pid=2582,fd=130))
+p_raw    UNCONN       0         0                                                             *:e1-3                                   *            users:(("sr_xdp_lc",pid=2582,fd=63))
+p_raw    UNCONN       0         0                                                             *:e1-3-cx                                *           
+p_raw    UNCONN       0         0                                                             *:e1-4                                   *            users:(("sr_xdp_lc",pid=2582,fd=75))
+p_raw    UNCONN       0         0                                                             *:e1-5                                   *            users:(("sr_xdp_lc",pid=2582,fd=76))
+p_raw    UNCONN       0         0                                                             *:e1-4-cx                                *           
+p_raw    UNCONN       0         0                                                             *:e1-6                                   *            users:(("sr_xdp_lc",pid=2582,fd=78))
+p_raw    UNCONN       0         0                                                             *:e1-5-cx                                *           
+p_raw    UNCONN       0         0                                                             *:e1-7                                   *            users:(("sr_xdp_lc",pid=2582,fd=79))
+p_raw    UNCONN       0         0                                                             *:e1-8                                   *            users:(("sr_xdp_lc",pid=2582,fd=80))
+p_raw    UNCONN       0         0                                                             *:e1-6-cx                                *           
+p_raw    UNCONN       0         0                                                             *:e1-7-cx                                *           
+p_raw    UNCONN       0         0                                                             *:e1-8-cx                                *           
+p_raw    UNCONN       0         0                                                             *:e1-9                                   *            users:(("sr_xdp_lc",pid=2582,fd=81))
+p_raw    UNCONN       0         0                                                             *:e1-9-cx                                *           
+p_raw    UNCONN       0         0                                                             *:e1-10-cx                               *           
+p_raw    UNCONN       0         0                                                             *:e1-11-cx                               *           
+p_raw    UNCONN       0         0                                                             *:e1-10                                  *            users:(("sr_xdp_lc",pid=2582,fd=82))
+p_raw    UNCONN       0         0                                                             *:e1-11                                  *            users:(("sr_xdp_lc",pid=2582,fd=83))
+p_raw    UNCONN       0         0                                                             *:e1-12                                  *            users:(("sr_xdp_lc",pid=2582,fd=84))
+p_raw    UNCONN       0         0                                                             *:e1-1                                   *            users:(("sr_xdp_lc",pid=2582,fd=61))
+p_raw    UNCONN       0         0                                                             *:e1-12-cx                               *           
+p_raw    UNCONN       0         0                                                             *:e1-1-0                                 *            users:(("sr_xdp_lc",pid=2582,fd=62))
+p_raw    UNCONN       0         0                                                             *:e1-2                                   *            users:(("sr_xdp_lc",pid=2582,fd=131))
+p_raw    UNCONN       0         0                                                             *:e1-1-cx                                *           
+p_raw    UNCONN       0         0                                                             *:e1-2-cx                                *           
+p_raw    UNCONN       0         0                                                             *:e1-2-0                                 *            users:(("sr_xdp_lc",pid=2582,fd=132))
+u_dgr    ESTAB        0         0                                                             * 2405957                               * 0           users:(("sr_arp_nd_mgr",pid=2668,fd=3))
+u_str    ESTAB        0         0                                                             * 2405542                               * 2405543     users:(("sr_net_inst_mgr",pid=2777,fd=15))
+u_str    ESTAB        0         0                                                             * 2410660                               * 2406633     users:(("sr_vxlan_mgr",pid=3422,fd=16))
+u_dgr    ESTAB        0         0                                                             * 2398081                               * 0           users:(("sudo",pid=3301,fd=15),("sudo",pid=3287,fd=15))
+u_str    ESTAB        0         0                                                             * 2397080                               * 2397081     users:(("sr_mgmt_server",pid=2436,fd=17))
+u_str    ESTAB        0         0                                                             * 2408655                               * 2405589     users:(("sr_xdp_lc",pid=2582,fd=25))
+u_str    ESTAB        0         0                                                             * 2403715                               * 2403716     users:(("sr_arp_nd_mgr",pid=2668,fd=15))
+u_str    ESTAB        0         0                                                             * 2843590                               * 2853247     users:(("sr_bgp_mgr",pid=6133,fd=19))
+u_dgr    ESTAB        0         0                                                             * 2415664                               * 0           users:(("sr_plcy_mgr",pid=3318,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2405211                               * 2405210     users:(("sr_idb_server",pid=2227,fd=61))
+u_dgr    ESTAB        0         0                                                             * 2862501                               * 2860227     users:(("sr_idb_server",pid=2227,fd=63))
+u_str    ESTAB        0         0                                                             * 2406647                               * 2405767     users:(("sr_grpc_server",pid=3335,fd=8))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2401706                               * 2399805     users:(("sr_idb_server",pid=2227,fd=46))
+u_str    ESTAB        0         0                                                             * 2407623                               * 2407624     users:(("sr_bgp_mgr",pid=6133,fd=12),("sr_vxlan_mgr",pid=3422,fd=12),("sr_qos_mgr",pid=3361,fd=12),("sr_plcy_mgr",pid=3318,fd=12),("sudo",pid=3301,fd=12),("sr_lldp_mgr",pid=3297,fd=12),("sudo",pid=3287,fd=12),("sr_app_mgr",pid=1877,fd=12))
+u_dgr    ESTAB        0         0                                                             * 2863302                               * 2860227     users:(("sr_bgp_mgr",pid=6133,fd=3))
+u_dgr    ESTAB        0         0                                                             * 2409137                               * 0           users:(("sr_l2_mac_learn",pid=3000,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2392026                               * 2392025     users:(("sr_idb_server",pid=2227,fd=28))
+u_str    ESTAB        0         0                                                             * 2398083                               * 2398082     users:(("sudo",pid=3301,fd=20))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2857064                               * 2850644     users:(("sr_idb_server",pid=2227,fd=72))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2401678                               * 2407637     users:(("sr_idb_server",pid=2227,fd=44))
+u_str    ESTAB        0         0                                                             * 2403699                               * 2405546     users:(("sr_net_inst_mgr",pid=2777,fd=20))
+u_str    ESTAB        0         0                                                             * 2392025                               * 2392026     users:(("sr_mcid_mgr",pid=2529,fd=15))
+u_dgr    ESTAB        0         0                                                             * 2414213                               * 0           users:(("sr_linux_mgr",pid=2324,fd=3))
+u_dgr    ESTAB        0         0                                                             * 2859278                               * 2860227     users:(("sr_lag_mgr",pid=2264,fd=3))
+u_str    ESTAB        0         0                                                             * 3327647                               * 3327646     users:(("sudo",pid=8270,fd=12))
+u_str    ESTAB        0         0                                                             * 2402103                               * 2410921     users:(("sr_xdp_lc",pid=2582,fd=100))
+u_str    ESTAB        0         0                                                             * 2397956                               * 2400613     users:(("sr_stat_id_mgr",pid=2921,fd=15))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2397929                               * 2397928     users:(("sr_idb_server",pid=2227,fd=31))
+u_str    LISTEN       0         64                     /opt/srlinux/var/run/cxmgr_dbg_cli:50128 2382325                               * 0          
+u_dgr    ESTAB        0         0                                                             * 2405270                               * 0           users:(("sr_qos_mgr",pid=3361,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2400576                               * 2400575     users:(("sr_idb_server",pid=2227,fd=25))
+u_dgr    ESTAB        0         0                                                             * 2412812                               * 0           users:(("sr_license_mgr",pid=2491,fd=3))
+u_str    ESTAB        0         0                                                             * 2410883                               * 2408972     users:(("sr_xdp_lc",pid=2582,fd=73))
+u_dgr    ESTAB        0         0                                                             * 2854406                               * 2860227     users:(("sr_lldp_mgr",pid=3297,fd=3))
+u_str    ESTAB        0         0                                                             * 2399708                               * 2399709     users:(("sr_license_mgr",pid=2491,fd=15))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2410921                               * 2402103     users:(("sr_idb_server",pid=2227,fd=59))
+u_str    ESTAB        0         0                                                             * 2401650                               * 2399789     users:(("sr_l2_mac_learn",pid=3000,fd=15))
+u_str    ESTAB        0         0                                                             * 2400564                               * 2400565     users:(("sr_linux_mgr",pid=2324,fd=15))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2405767                               * 2406647     users:(("sr_idb_server",pid=2227,fd=53))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2404026                               * 2400078     users:(("sr_idb_server",pid=2227,fd=56))
+u_str    ESTAB        0         0                                                             * 2406512                               * 2411523     users:(("sr_sflow_sample",pid=3135,fd=16))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2405590                               * 2399788     users:(("sr_idb_server",pid=2227,fd=41))
+u_str    ESTAB        0         0                                                             * 2857989                               * 2853277     users:(("sr_bgp_mgr",pid=6133,fd=43))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2408176                               * 2406615     users:(("sr_idb_server",pid=2227,fd=48))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2408972                               * 2410883     users:(("sr_idb_server",pid=2227,fd=57))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2407624                               * 2407623     users:(("sr_idb_server",pid=2227,fd=36))
+u_str    ESTAB        0         0                                                             * 2405698                               * 2405697     users:(("sudo",pid=3330,fd=12))
+u_dgr    ESTAB        0         0                                                             * 2390724                               * 0           users:(("sr_radius_mgr",pid=2393,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2853249                               * 2853248     users:(("sr_idb_server",pid=2227,fd=67))
+u_str    ESTAB        0         0                                                             * 2398491                               * 2398492     users:(("sudo",pid=1642,fd=11))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2404025                               * 2411729     users:(("sr_idb_server",pid=2227,fd=55))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2395063                               * 2395062     users:(("sr_idb_server",pid=2227,fd=19))
+u_seq    LISTEN       0         10                           /opt/srlinux/var/run/vxdp_launcher 2389955                               * 0           users:(("sr_bgp_mgr",pid=6133,fd=9),("sr_vxlan_mgr",pid=3422,fd=9),("sr_qos_mgr",pid=3361,fd=9),("sr_plcy_mgr",pid=3318,fd=9),("sudo",pid=3301,fd=9),("sr_lldp_mgr",pid=3297,fd=9),("sudo",pid=3287,fd=9),("sr_sflow_sample",pid=3135,fd=9),("sr_evpn_mgr",pid=3081,fd=9),("sr_chassis_mgr",pid=3022,fd=9),("sr_l2_mac_learn",pid=3000,fd=9),("sr_bfd_mgr",pid=2948,fd=9),("sr_stat_id_mgr",pid=2921,fd=9),("sr_fib_mgr",pid=2860,fd=9),("sr_acl_mgr",pid=2820,fd=9),("sr_net_inst_mgr",pid=2777,fd=9),("sr_l2_mac_mgr",pid=2733,fd=9),("sr_aaa_mgr",pid=2696,fd=9),("sr_arp_nd_mgr",pid=2668,fd=9),("sr_mfib_mgr",pid=2627,fd=9),("sr_xdp_lc",pid=2582,fd=9),("sr_mcid_mgr",pid=2529,fd=9),("sr_license_mgr",pid=2491,fd=9),("sr_mgmt_server",pid=2436,fd=9),("sr_radius_mgr",pid=2393,fd=9),("sr_dhcp_client_",pid=2362,fd=9),("sr_linux_mgr",pid=2324,fd=9),("sr_log_mgr",pid=2284,fd=9),("sr_lag_mgr",pid=2264,fd=9),("sr_idb_server",pid=2227,fd=9),("sr_device_mgr",pid=2160,fd=9),("sr_app_mgr",pid=1877,fd=9))
+u_str    ESTAB        0         0                   ///opt/srlinux/var/run/sr_mgmt_server:50051 2408923                               * 2410805     users:(("sr_mgmt_server",pid=2436,fd=25))
+u_dgr    ESTAB        0         0                                                             * 2412840                               * 0           users:(("sr_net_inst_mgr",pid=2777,fd=3))
+u_str    ESTAB        0         0                                                             * 2843588                               * 2852645     users:(("sr_bgp_mgr",pid=6133,fd=17))
+u_dgr    ESTAB        0         0                                                             * 2411027                               * 0           users:(("sr_sflow_sample",pid=3135,fd=3))
+u_str    ESTAB        0         0                                                             * 2398492                               * 2398491     users:(("sudo",pid=1643,fd=12))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2852647                               * 2843589     users:(("sr_idb_server",pid=2227,fd=65))
+u_str    ESTAB        0         0                                                             * 2405210                               * 2405211     users:(("sr_xdp_lc",pid=2582,fd=116))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2403716                               * 2403715     users:(("sr_idb_server",pid=2227,fd=38))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2392038                               * 2392037     users:(("sr_idb_server",pid=2227,fd=29))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2397081                               * 2397080     users:(("sr_idb_server",pid=2227,fd=26))
+u_str    ESTAB        0         0                                                             * 2855175                               * 2857063     users:(("sr_bgp_mgr",pid=6133,fd=54))
+u_str    ESTAB        0         0                                                             * 2406615                               * 2408176     users:(("sr_lldp_mgr",pid=3297,fd=16))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2399749                               * 2399748     users:(("sr_idb_server",pid=2227,fd=30))
+u_dgr    ESTAB        0         0                                                             * 2854391                               * 2860227     users:(("sr_chassis_mgr",pid=3022,fd=3))
+u_str    ESTAB        0         0                                                             * 3327646                               * 3327647     users:(("sudo",pid=8250,fd=11))
+u_str    ESTAB        0         0                                                             * 2415475                               * 2423071     users:(("sr_grpc_server",pid=3335,fd=22))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2400791                               * 2400790     users:(("sr_idb_server",pid=2227,fd=51))
+u_str    LISTEN       0         64                           /opt/srlinux/var/run/dev_mgr:50011 2397608                               * 0           users:(("sr_device_mgr",pid=2160,fd=25))
+u_dgr    ESTAB        0         0                                                             * 2413655                               * 0           users:(("sr_vxlan_mgr",pid=3422,fd=3))
+u_str    ESTAB        0         0                                                             * 2404016                               * 2404017     users:(("sr_xdp_lc",pid=2582,fd=59))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2403238                               * 2404102     users:(("sr_idb_server",pid=2227,fd=60))
+u_str    ESTAB        0         0                                                             * 2407637                               * 2401678     users:(("sr_evpn_mgr",pid=3081,fd=16))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2405589                               * 2408655     users:(("sr_idb_server",pid=2227,fd=40))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2857063                               * 2855175     users:(("sr_idb_server",pid=2227,fd=71))
+u_str    ESTAB        0         0                                                             * 2395062                               * 2395063     users:(("sr_log_mgr",pid=2284,fd=15))
+u_str    ESTAB        0         0                                                             * 2853248                               * 2853249     users:(("sr_bgp_mgr",pid=6133,fd=20))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2400565                               * 2400564     users:(("sr_idb_server",pid=2227,fd=23))
+u_str    ESTAB        0         0                                                             * 2400788                               * 2399867     users:(("sr_plcy_mgr",pid=3318,fd=16))
+u_str    LISTEN       0         4096                 ///var/run/redis/devmgr_sonic_server:50065 2397626                               * 0           users:(("sr_device_mgr",pid=2160,fd=66))
+u_str    LISTEN       0         64                     /opt/srlinux/var/run/sr_idb_server:50010 2402357                               * 0           users:(("sr_idb_server",pid=2227,fd=16))
+u_dgr    ESTAB        0         0                                                             * 2417385                               * 0           users:(("sr_l2_mac_mgr",pid=2733,fd=3))
+u_str    ESTAB        0         0                                                             * 2843589                               * 2852647     users:(("sr_bgp_mgr",pid=6133,fd=18))
+u_dgr    ESTAB        0         0                                                             * 2415663                               * 0           users:(("sr_stat_id_mgr",pid=2921,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2410911                               * 2408371     users:(("sr_idb_server",pid=2227,fd=58))
+u_str    ESTAB        0         0                                                             * 2391932                               * 2391933     users:(("sr_lag_mgr",pid=2264,fd=15))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2853277                               * 2857989     users:(("sr_idb_server",pid=2227,fd=70))
+u_dgr    ESTAB        0         0                                                             * 2409138                               * 0           users:(("sr_evpn_mgr",pid=3081,fd=3))
+u_dgr    ESTAB        0         0                                                             * 2398490                               * 0           users:(("sudo",pid=1643,fd=7),("sudo",pid=1642,fd=7))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2399709                               * 2399708     users:(("sr_idb_server",pid=2227,fd=24))
+u_dgr    ESTAB        0         0                                                             * 2854371                               * 2860227     users:(("sr_grpc_server",pid=3335,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2411523                               * 2406512     users:(("sr_idb_server",pid=2227,fd=45))
+u_str    ESTAB        0         0                                                             * 2408371                               * 2410911     users:(("sr_xdp_lc",pid=2582,fd=85))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2401651                               * 2400628     users:(("sr_idb_server",pid=2227,fd=43))
+u_str    ESTAB        0         0                                                             * 2397083                               * 2406442     users:(("sr_mgmt_server",pid=2436,fd=18))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2391933                               * 2391932     users:(("sr_idb_server",pid=2227,fd=20))
+u_dgr    ESTAB        0         0                                                             * 2405269                               * 0           users:(("sr_device_mgr",pid=2160,fd=3))
+u_str    LISTEN       0         64                        /opt/srlinux/var/run/idb_server:50011 2402358                               * 0           users:(("sr_idb_server",pid=2227,fd=17))
+u_dgr    ESTAB        0         0                                                             * 2414777                               * 0           users:(("sr_bfd_mgr",pid=2948,fd=3))
+u_dgr    ESTAB        0         0                                                             * 2868213                               * 2860227     users:(("sr_dhcp_client_",pid=2362,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2404112                               * 2406993     users:(("sr_idb_server",pid=2227,fd=62))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2404017                               * 2404016     users:(("sr_idb_server",pid=2227,fd=54))
+u_str    ESTAB        0         0                                                             * 2400628                               * 2401651     users:(("sr_chassis_mgr",pid=3022,fd=15))
+u_str    ESTAB        0         0                                                             * 2399783                               * 2402751     users:(("sr_fib_mgr",pid=2860,fd=15))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2402751                               * 2399783     users:(("sr_idb_server",pid=2227,fd=37))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2851633                               * 2854254     users:(("sr_idb_server",pid=2227,fd=68))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2406442                               * 2397083     users:(("sr_idb_server",pid=2227,fd=27))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2399868                               * 2408825     users:(("sr_idb_server",pid=2227,fd=50))
+u_str    ESTAB        0         0                                                             * 2419052                               * 2418158     users:(("sr_grpc_server",pid=3335,fd=21))
+u_str    ESTAB        0         0                                                             * 2398082                               * 2398083     users:(("sudo",pid=3287,fd=19))
+u_str    LISTEN       0         4096                ///opt/srlinux/var/run/sr_mgmt_server:50051 2396059                               * 0           users:(("sr_mgmt_server",pid=2436,fd=24))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2395079                               * 2395078     users:(("sr_idb_server",pid=2227,fd=22))
+u_dgr    ESTAB        0         0                                                             * 2411856                               * 0           users:(("sr_mcid_mgr",pid=2529,fd=3))
+u_str    ESTAB        0         0                                                             * 2404102                               * 2403238     users:(("sr_xdp_lc",pid=2582,fd=113))
+u_str    ESTAB        0         0                                                             * 2854254                               * 2851633     users:(("sr_bgp_mgr",pid=6133,fd=21))
+u_str    ESTAB        0         0                                                             * 2400450                               * 2397638     users:(("sr_bgp_mgr",pid=6133,fd=11),("sr_vxlan_mgr",pid=3422,fd=11),("sr_qos_mgr",pid=3361,fd=11),("sr_plcy_mgr",pid=3318,fd=11),("sudo",pid=3301,fd=11),("sr_lldp_mgr",pid=3297,fd=11),("sudo",pid=3287,fd=11),("sr_sflow_sample",pid=3135,fd=11),("sr_evpn_mgr",pid=3081,fd=11),("sr_chassis_mgr",pid=3022,fd=11),("sr_l2_mac_learn",pid=3000,fd=11),("sr_bfd_mgr",pid=2948,fd=11),("sr_stat_id_mgr",pid=2921,fd=11),("sr_fib_mgr",pid=2860,fd=11),("sr_acl_mgr",pid=2820,fd=11),("sr_net_inst_mgr",pid=2777,fd=11),("sr_l2_mac_mgr",pid=2733,fd=11),("sr_aaa_mgr",pid=2696,fd=11),("sr_arp_nd_mgr",pid=2668,fd=11),("sr_mfib_mgr",pid=2627,fd=11),("sr_xdp_lc",pid=2582,fd=11),("sr_mcid_mgr",pid=2529,fd=11),("sr_license_mgr",pid=2491,fd=11),("sr_mgmt_server",pid=2436,fd=11),("sr_radius_mgr",pid=2393,fd=11),("sr_dhcp_client_",pid=2362,fd=11),("sr_linux_mgr",pid=2324,fd=11),("sr_log_mgr",pid=2284,fd=11),("sr_lag_mgr",pid=2264,fd=11),("sr_app_mgr",pid=1877,fd=11))
+u_str    ESTAB        0         0                                                             * 2411729                               * 2404025     users:(("sr_xdp_lc",pid=2582,fd=69))
+u_str    ESTAB        0         0                                                             * 2395078                               * 2395079     users:(("sr_dhcp_client_",pid=2362,fd=15))
+u_dgr    ESTAB        0         0                                                             * 2861282                               * 2860227     users:(("sr_aaa_mgr",pid=2696,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2399789                               * 2401650     users:(("sr_idb_server",pid=2227,fd=42))
+u_dgr    ESTAB        0         0                                                             * 2414776                               * 0           users:(("sr_fib_mgr",pid=2860,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2405546                               * 2403699     users:(("sr_idb_server",pid=2227,fd=34))
+u_str    ESTAB        0         0                                                             * 2392037                               * 2392038     users:(("sr_mfib_mgr",pid=2627,fd=16))
+u_str    ESTAB        0         0                   ///opt/srlinux/var/run/sr_mgmt_server:50051 2423071                               * 2415475     users:(("sr_mgmt_server",pid=2436,fd=26))
+u_str    ESTAB        0         0                                                             * 2410805                               * 2408923     users:(("sr_grpc_server",pid=3335,fd=17))
+u_str    ESTAB        0         0                                                             * 2399748                               * 2399749     users:(("sr_aaa_mgr",pid=2696,fd=16))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2399867                               * 2400788     users:(("sr_idb_server",pid=2227,fd=49))
+u_str    ESTAB        0         0                                                             * 2405697                               * 2405698     users:(("sudo",pid=3302,fd=11))
+u_str    ESTAB        0         0                                                             * 2400790                               * 2400791     users:(("sr_plcy_mgr",pid=3318,fd=19))
+u_dgr    ESTAB        0         0                                                             * 3327645                               * 2860227     users:(("sudo",pid=8270,fd=7),("sudo",pid=8250,fd=7))
+u_dgr    ESTAB        0         0                                                             * 2423068                               * 0           users:(("sr_supportd",pid=1407,fd=3))
+u_dgr    ESTAB        0         0                                                             * 2856192                               * 0           users:(("sr_mgmt_server",pid=2436,fd=3))
+u_dgr    ESTAB        0         0                                                      /dev/log 2860227                               * 0           users:(("rsyslogd",pid=6272,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2852645                               * 2843588     users:(("sr_idb_server",pid=2227,fd=64))
+u_str    ESTAB        0         0                                                             * 2406993                               * 2404112     users:(("sr_xdp_lc",pid=2582,fd=124))
+u_str    ESTAB        0         0                                                             * 2400078                               * 2404026     users:(("sr_xdp_lc",pid=2582,fd=70))
+u_dgr    ESTAB        0         0                                                             * 2412869                               * 0           users:(("sr_app_mgr",pid=1877,fd=3))
+u_str    ESTAB        0         0                                                             * 2390729                               * 2390730     users:(("sr_radius_mgr",pid=2393,fd=16))
+u_str    ESTAB        0         0                                                             * 2404109                               * 2405216     users:(("sr_xdp_lc",pid=2582,fd=121))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2406633                               * 2410660     users:(("sr_idb_server",pid=2227,fd=52))
+u_str    ESTAB        0         0                   ///opt/srlinux/var/run/sr_aaa_manager:50013 2418158                               * 2419052     users:(("sr_aaa_mgr",pid=2696,fd=20))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2400612                               * 2400611     users:(("sr_idb_server",pid=2227,fd=33))
+u_str    ESTAB        0         0                         /opt/srlinux/var/run/idb_server:50011 2397638                               * 2400450     users:(("sr_idb_server",pid=2227,fd=18))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2853247                               * 2843590     users:(("sr_idb_server",pid=2227,fd=66))
+u_str    LISTEN       0         3             /opt/srlinux/var/run/sr_aaa_json_rpc_server:50015 2399764                               * 0           users:(("sr_aaa_mgr",pid=2696,fd=19))
+u_dgr    ESTAB        0         0                                                             * 2404127                               * 0           users:(("sr_log_mgr",pid=2284,fd=3))
+u_dgr    ESTAB        0         0                                                             * 2405696                               * 0           users:(("sudo",pid=3330,fd=7),("sudo",pid=3302,fd=7))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2405543                               * 2405542     users:(("sr_idb_server",pid=2227,fd=32))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2853276                               * 2857987     users:(("sr_idb_server",pid=2227,fd=69))
+u_str    ESTAB        0         0                                                             * 2403776                               * 2400676     users:(("sr_evpn_mgr",pid=3081,fd=20))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2390730                               * 2390729     users:(("sr_idb_server",pid=2227,fd=21))
+u_str    LISTEN       0         4096                ///opt/srlinux/var/run/sr_aaa_manager:50013 2406494                               * 0           users:(("sr_aaa_mgr",pid=2696,fd=24))
+u_str    ESTAB        0         0                                                             * 2401303                               * 2392831     users:(("sr_bgp_mgr",pid=6133,fd=10),("sr_vxlan_mgr",pid=3422,fd=10),("sr_qos_mgr",pid=3361,fd=10),("sr_plcy_mgr",pid=3318,fd=10),("sudo",pid=3301,fd=10),("sr_lldp_mgr",pid=3297,fd=10),("sudo",pid=3287,fd=10),("sr_sflow_sample",pid=3135,fd=10),("sr_evpn_mgr",pid=3081,fd=10),("sr_chassis_mgr",pid=3022,fd=10),("sr_l2_mac_learn",pid=3000,fd=10),("sr_bfd_mgr",pid=2948,fd=10),("sr_stat_id_mgr",pid=2921,fd=10),("sr_fib_mgr",pid=2860,fd=10),("sr_acl_mgr",pid=2820,fd=10),("sr_net_inst_mgr",pid=2777,fd=10),("sr_l2_mac_mgr",pid=2733,fd=10),("sr_aaa_mgr",pid=2696,fd=10),("sr_arp_nd_mgr",pid=2668,fd=10),("sr_mfib_mgr",pid=2627,fd=10),("sr_xdp_lc",pid=2582,fd=10),("sr_mcid_mgr",pid=2529,fd=10),("sr_license_mgr",pid=2491,fd=10),("sr_mgmt_server",pid=2436,fd=10),("sr_radius_mgr",pid=2393,fd=10),("sr_dhcp_client_",pid=2362,fd=10),("sr_linux_mgr",pid=2324,fd=10),("sr_log_mgr",pid=2284,fd=10),("sr_lag_mgr",pid=2264,fd=10),("sr_idb_server",pid=2227,fd=10),("sr_app_mgr",pid=1877,fd=10))
+u_str    ESTAB        0         0                                                             * 2400575                               * 2400576     users:(("sr_linux_mgr",pid=2324,fd=16))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2405216                               * 2404109     users:(("sr_idb_server",pid=2227,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2400676                               * 2403776     users:(("sr_idb_server",pid=2227,fd=47))
+u_str    ESTAB        0         0                                                             * 2408825                               * 2399868     users:(("sr_qos_mgr",pid=3361,fd=16))
+u_str    ESTAB        0         0                                                             * 2850644                               * 2857064     users:(("sr_bgp_mgr",pid=6133,fd=56))
+u_dgr    ESTAB        0         0                                                             * 2401024                               * 0           users:(("sr_acl_mgr",pid=2820,fd=3))
+u_str    ESTAB        0         0                                                             * 2396131                               * 2405584     users:(("sr_bfd_mgr",pid=2948,fd=15))
+u_str    ESTAB        0         0                                                             * 2399805                               * 2401706     users:(("sr_device_mgr",pid=2160,fd=68))
+u_str    ESTAB        0         0                                                             * 2399788                               * 2405590     users:(("sr_xdp_lc",pid=2582,fd=26))
+u_str    ESTAB        0         0                            /opt/srlinux/var/run/dev_mgr:50011 2392831                               * 2401303     users:(("sr_device_mgr",pid=2160,fd=67))
+u_str    ESTAB        0         0                                                             * 2400611                               * 2400612     users:(("sr_acl_mgr",pid=2820,fd=15))
+u_dgr    ESTAB        0         0                                                             * 2859277                               * 2860227     users:(("sr_xdp_lc",pid=2582,fd=127))
+u_str    ESTAB        0         0                                                             * 2397928                               * 2397929     users:(("sr_l2_mac_mgr",pid=2733,fd=15))
+u_str    ESTAB        0         0                                                             * 2857987                               * 2853276     users:(("sr_bgp_mgr",pid=6133,fd=40))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2405584                               * 2396131     users:(("sr_idb_server",pid=2227,fd=39))
+u_dgr    ESTAB        0         0                                                             * 2400289                               * 0           users:(("runuser",pid=1644,fd=3))
+u_str    ESTAB        0         0                      /opt/srlinux/var/run/sr_idb_server:50010 2400613                               * 2397956     users:(("sr_idb_server",pid=2227,fd=35))
+u_dgr    ESTAB        0         0                                                             * 2414775                               * 0           users:(("sr_mfib_mgr",pid=2627,fd=3))
+raw      UNCONN       0         0                                                             *:58                                    *:*          
+udp      UNCONN       0         0                                                       0.0.0.0:49152                           0.0.0.0:*           users:(("sr_bfd_mgr",pid=2948,fd=16))
+udp      UNCONN       0         0                                                   192.168.0.1:67                              0.0.0.0:*          
+udp      UNCONN       0         0                                                       0.0.0.0:50058                           0.0.0.0:*           users:(("sr_supportd",pid=1407,fd=6))
+udp      UNCONN       0         0                                                     127.0.0.1:50061                           0.0.0.0:*           users:(("sr_supportd",pid=1407,fd=10))
+udp      UNCONN       0         0                           [fe80::c3c:96ff:fe8f:a9d8]%mgmt0-cx:547                                [::]:*          
+udp      UNCONN       0         0                                          [ff02::1:2]%mgmt0-cx:547                                [::]:*          
+udp      UNCONN       0         0                          [fe80::246e:5dff:feef:e997]%monit_in:547                                [::]:*          
+udp      UNCONN       0         0                                          [ff02::1:2]%monit_in:547                                [::]:*          
+udp      UNCONN       0         0                          [fe80::f0f3:3ff:feba:b5c2]%gway-2800:547                                [::]:*          
+udp      UNCONN       0         0                                         [ff02::1:2]%gway-2800:547                                [::]:*          
+udp      UNCONN       0         0                            [fe80::5058:2aff:fec3:84a]%mgmt0-0:547                                [::]:*          
+udp      UNCONN       0         0                                           [ff02::1:2]%mgmt0-0:547                                [::]:*          
+udp      UNCONN       0         0                         [fe80::f477:a1ff:fe2c:9e32]%gway-2801:547                                [::]:*          
+udp      UNCONN       0         0                                         [ff02::1:2]%gway-2801:547                                [::]:*          
+udp      UNCONN       0         0                             [fe80::68b4:deff:fe6a:9f3]%e1-1-0:547                                [::]:*          
+udp      UNCONN       0         0                                            [ff02::1:2]%e1-1-0:547                                [::]:*          
+udp      UNCONN       0         0                            [fe80::4c6e:7aff:feca:6e9e]%e1-2-0:547                                [::]:*          
+udp      UNCONN       0         0                                            [ff02::1:2]%e1-2-0:547                                [::]:*          
+tcp      LISTEN       0         128                                                     0.0.0.0:50060                           0.0.0.0:*           users:(("sr_supportd",pid=1407,fd=8))
+tcp      LISTEN       0         128                                                     0.0.0.0:50059                           0.0.0.0:*           users:(("sr_supportd",pid=1407,fd=5))
+tcp      LISTEN       0         4096                                                    0.0.0.0:50068                           0.0.0.0:*           users:(("sr_device_mgr",pid=2160,fd=39))
+tcp      LISTEN       0         128                                                     0.0.0.0:22                              0.0.0.0:*           users:(("sshd",pid=91,fd=3))
+tcp      ESTAB        0         0                                                     127.0.0.1:62912                         127.0.0.1:59431       users:(("sr_xdp_lc",pid=2582,fd=104))
+tcp      ESTAB        0         0                                                     127.0.0.1:56996                         127.0.0.1:50054       users:(("sr_xdp_lc",pid=2582,fd=30))
+tcp      ESTAB        0         0                                                   10.244.0.37:60864                       10.244.0.17:50123      
+tcp      ESTAB        0         0                                                     127.0.0.1:65210                         127.0.0.1:59381       users:(("sr_xdp_lc",pid=2582,fd=77))
+tcp      ESTAB        0         0                                                   10.244.0.37:59474                       10.244.0.19:50123      
+tcp      ESTAB        0         0                                                     127.0.0.1:64154                         127.0.0.1:56465       users:(("sr_xdp_lc",pid=2582,fd=107))
+tcp      ESTAB        0         0                                                     127.0.0.1:64866                         127.0.0.1:59691       users:(("sr_xdp_lc",pid=2582,fd=106))
+tcp      ESTAB        0         0                                                     127.0.0.1:56296                         127.0.0.1:57413       users:(("sr_xdp_lc",pid=2582,fd=103))
+tcp      ESTAB        0         0                                                     127.0.0.1:57952                         127.0.0.1:58643       users:(("sr_xdp_lc",pid=2582,fd=109))
+tcp      ESTAB        0         0                                                     127.0.0.1:56182                         127.0.0.1:57109       users:(("sr_xdp_lc",pid=2582,fd=96))
+tcp      ESTAB        0         0                                                     127.0.0.1:58892                         127.0.0.1:57519       users:(("sr_evpn_mgr",pid=3081,fd=53))
+tcp      ESTAB        0         0                                                     127.0.0.1:65222                         127.0.0.1:59381       users:(("sr_xdp_lc",pid=2582,fd=126))
+tcp      ESTAB        0         0                                                     127.0.0.1:59266                         127.0.0.1:55859       users:(("sr_xdp_lc",pid=2582,fd=105))
+tcp      ESTAB        0         0                                                     127.0.0.1:58932                         127.0.0.1:55365       users:(("sr_xdp_lc",pid=2582,fd=111))
+tcp      ESTAB        0         0                                                     127.0.0.1:63834                         127.0.0.1:59813       users:(("sr_xdp_lc",pid=2582,fd=108))
+tcp      ESTAB        0         0                                                     127.0.0.1:62714                         127.0.0.1:55915       users:(("sr_xdp_lc",pid=2582,fd=101))
+tcp      ESTAB        0         0                                                     127.0.0.1:65032                         127.0.0.1:55627       users:(("sr_xdp_lc",pid=2582,fd=110))
+tcp      ESTAB        0         0                                                     127.0.0.1:56360                         127.0.0.1:56547       users:(("sr_xdp_lc",pid=2582,fd=102))
+tcp      LISTEN       0         64                                                            *:57109                                 *:*           users:(("sr_arp_nd_mgr",pid=2668,fd=17))
+tcp      LISTEN       0         64                                                            *:56465                                 *:*           users:(("sr_arp_nd_mgr",pid=2668,fd=20))
+tcp      LISTEN       0         64                                                            *:56547                                 *:*           users:(("sr_dhcp_client_",pid=2362,fd=16))
+tcp      LISTEN       0         64                                                            *:55859                                 *:*           users:(("sr_arp_nd_mgr",pid=2668,fd=18))
+tcp      LISTEN       0         64                                                            *:55915                                 *:*           users:(("sr_lag_mgr",pid=2264,fd=16))
+tcp      LISTEN       0         64                                                            *:55627                                 *:*           users:(("sr_lldp_mgr",pid=3297,fd=17))
+tcp      LISTEN       0         64                                                            *:55365                                 *:*           users:(("sr_grpc_server",pid=3335,fd=11))
+tcp      LISTEN       0         64                                                            *:59381                                 *:*           users:(("sr_l2_mac_learn",pid=3000,fd=16))
+tcp      LISTEN       0         64                                                            *:58643                                 *:*           users:(("sr_sflow_sample",pid=3135,fd=17))
+tcp      LISTEN       0         64                                                            *:58479                                 *:*           users:(("sr_l2_mac_learn",pid=3000,fd=17))
+tcp      LISTEN       0         64                                                            *:50012                                 *:*           users:(("sr_idb_server",pid=2227,fd=14))
+tcp      LISTEN       0         4096                                                          *:50013                                 *:*           users:(("sr_aaa_mgr",pid=2696,fd=23))
+tcp      LISTEN       0         64                                                            *:50010                                 *:*           users:(("sr_idb_server",pid=2227,fd=15))
+tcp      LISTEN       0         64                                                            *:50054                                 *:*           users:(("sr_xdp_lc",pid=2582,fd=29))
+tcp      LISTEN       0         4096                                                          *:50051                                 *:*           users:(("sr_mgmt_server",pid=2436,fd=23))
+tcp      LISTEN       0         4096                                                          *:50065                                 *:*           users:(("sr_device_mgr",pid=2160,fd=65))
+tcp      LISTEN       0         4096                                                          *:50126                                 *:*          
+tcp      LISTEN       0         64                                                            *:50123                                 *:*          
+tcp      LISTEN       0         64                                                            *:50128                                 *:*          
+tcp      LISTEN       0         128                                                        [::]:22                                 [::]:*           users:(("sshd",pid=91,fd=4))
+tcp      LISTEN       0         64                                                            *:57413                                 *:*           users:(("sr_dhcp_client_",pid=2362,fd=17))
+tcp      LISTEN       0         64                                                            *:57519                                 *:*           users:(("sr_arp_nd_mgr",pid=2668,fd=21))
+tcp      LISTEN       0         64                                                            *:59691                                 *:*           users:(("sr_arp_nd_mgr",pid=2668,fd=19))
+tcp      LISTEN       0         64                                                            *:59813                                 *:*           users:(("sr_bfd_mgr",pid=2948,fd=17))
+tcp      LISTEN       0         64                                                            *:59431                                 *:*           users:(("sr_arp_nd_mgr",pid=2668,fd=16))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:59431                [::ffff:127.0.0.1]:62912       users:(("sr_arp_nd_mgr",pid=2668,fd=24))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:57109                [::ffff:127.0.0.1]:56182       users:(("sr_arp_nd_mgr",pid=2668,fd=25))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:59381                [::ffff:127.0.0.1]:65222       users:(("sr_l2_mac_learn",pid=3000,fd=19))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:55915                [::ffff:127.0.0.1]:62714       users:(("sr_lag_mgr",pid=2264,fd=17))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:59691                [::ffff:127.0.0.1]:64866       users:(("sr_arp_nd_mgr",pid=2668,fd=27))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:56465                [::ffff:127.0.0.1]:64154       users:(("sr_arp_nd_mgr",pid=2668,fd=28))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:55859                [::ffff:127.0.0.1]:59266       users:(("sr_arp_nd_mgr",pid=2668,fd=26))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:55627                [::ffff:127.0.0.1]:65032       users:(("sr_lldp_mgr",pid=3297,fd=18))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:57413                [::ffff:127.0.0.1]:56296       users:(("sr_dhcp_client_",pid=2362,fd=20))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:58643                [::ffff:127.0.0.1]:57952       users:(("sr_sflow_sample",pid=3135,fd=18))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:59381                [::ffff:127.0.0.1]:65210       users:(("sr_l2_mac_learn",pid=3000,fd=18))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:55365                [::ffff:127.0.0.1]:58932       users:(("sr_grpc_server",pid=3335,fd=18))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:59813                [::ffff:127.0.0.1]:63834       users:(("sr_bfd_mgr",pid=2948,fd=18))
+tcp      TIME-WAIT    0         0                                          [::ffff:10.244.0.37]:50126               [::ffff:10.244.0.1]:46012      
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:56547                [::ffff:127.0.0.1]:56360       users:(("sr_dhcp_client_",pid=2362,fd=19))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:50054                [::ffff:127.0.0.1]:56996       users:(("sr_xdp_lc",pid=2582,fd=31))
+tcp      ESTAB        0         0                                            [::ffff:127.0.0.1]:57519                [::ffff:127.0.0.1]:58892       users:(("sr_arp_nd_mgr",pid=2668,fd=23))
+[user@leaf1 /]$
