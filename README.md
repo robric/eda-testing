@@ -677,7 +677,7 @@ clab@C-5CG53743Q8:~$ edactl node get-config -n eda leaf1
 
 admin@leaf2:~$ sudo ss -lntp | grep 50053
 LISTEN 0      4096               *:50053            *:*    users:(("sr_sdk_mgr",pid=13900,fd=27))
-'''
+```
 
 Now, on Leaf1, create virtual env and install ndk 
 
