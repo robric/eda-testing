@@ -466,7 +466,32 @@ The following steps are all captured in a script located [here](src/explore-api.
 - get secret and token
 - api calls
 
-The result is captured [here](assets/eda-api-access.log)
+The result is captured [here](assets/eda-api-access.log) - extract below with a few api endpoints.
+
+```
+[...]
+{
+  "paths": {
+    "/apps/aaa.eda.nokia.com/v1alpha1": {
+      "x-eda-nokia-com": {
+        "serverRelativeURL": "/openapi/v3/apps/aaa.eda.nokia.com/v1alpha1",
+        "title": "AAA Application APIs"
+      }
+    },
+    "/apps/aifabrics.eda.nokia.com/v1alpha1": {
+      "x-eda-nokia-com": {
+        "serverRelativeURL": "/openapi/v3/apps/aifabrics.eda.nokia.com/v1alpha1",
+        "title": "AIFabrics Application APIs"
+      }
+    },
+    "/apps/appstore.eda.nokia.com/v1": {
+      "x-eda-nokia-com": {
+        "serverRelativeURL": "/openapi/v3/apps/appstore.eda.nokia.com/v1",
+        "title": "App Store Application APIs"
+      }
+    },
+[...]
+```
 
 ### SRlinux stuffs
 
@@ -611,6 +636,14 @@ gnmic -a 10.244.0.17 -u admin -p NokiaSrl1! --skip-verify   subscribe --mode str
   ]
 }
 
+
+------- gnmi is the same as monitor in CLI - very good !! 
+
+A:admin@leaf1# monitor from state interface ethernet-1/1 admin-state
+[2025-12-03 13:05:56.369529]: update /interface[name=ethernet-1/1]/admin-state:enable
+[2025-12-03 13:09:19.745637]: update /interface[name=ethernet-1/1]/admin-state:disable
+
+
 ```
 
 #### Process and Connections 
@@ -690,7 +723,7 @@ pip install srlinux-ndk
 
 Explore the packages in ndk since dir(ndk) does not return much.
 
-````
+```
 import pkgutil
 import ndk
 for m in pkgutil.iter_modules(ndk.__path__):
@@ -733,5 +766,1382 @@ print(dir(sdk_service_pb2_grpc))
 ----
 ```
 
+# Srlinux Tests
+
+## vxlan L2 configuration 
+
+General organisation:
+- network-instance (== routing-instance)
+  - *type* mac-vrf
+  - interfaces(list) 
+    - local (ethernet)
+    - vxlan 
+       - *bridged* -> L2
+       - *routed* -> L3 (symetric ?)
+  - *protocols*
+    -bgp-evpn : settings for control plane of EVPN routes (NHs, filters... )
+    -bgp-vpn  : rds, vrf-export/import...
+ 
+```
+--{ + running }--[ network-instance br-foo ]--
+A:admin@leaf2# info
+    type mac-vrf
+    interface ethernet-1/3.0 {
+    }
+    vxlan-interface vxlan0.0 {
+    }
+    protocols {
+        bgp-evpn {
+            bgp-instance 1 {
+                admin-state enable
+                vxlan-interface vxlan0.0
+                evi 123
+                routes {
+                    bridge-table {
+                        next-hop 12.0.0.2
+                    }
+                }
+            }
+        }
+        bgp-vpn {
+            bgp-instance 1 {
+                route-target {
+                    export-rt target:65000:123
+                    import-rt target:65000:123
+                }
+            }
+        }
+    }
+    bridge-table {
+        static-mac {
+            mac 00:11:11:11:22:22 {
+                destination ethernet-1/3.0
+            }
+        }
+    }
+
+```
+``` 
+
+                   mac-vrf br-foo   [type mac-vrf] 
+                                |
+                                |
+       (protocols bgp-evpn)               (protocols bgp-vpn)     
+            [bgp-evpn]                         [bgp-vpn]
+    evpn routes operations                   I/E NLRI setttings
+JUNOS:                           JUNOS: 
+    routing-policy
+      "from protocol evpn"             vrf-target target:65000:1000"
+       then next-hop...                route-distinguisher
+                                       vrf-import / vrf-export
+    vlan-aware vs vlan-based
+
+                                |
+                                v
+               network-instance default [type default]
+
+
+--{ +* candidate shared default }--[ network-instance br-foo ]--
+A:admin@leaf1# tree protocols bgp-evpn
+bgp-evpn
++-- bgp-instance
+   +-- admin-state
+   +-- encapsulation-type
+   +-- vxlan-interface
+   +-- evi
+   +-- ecmp
+   +-- internal-tags
+   |  +-- set-tag-set
+   +-- routes
+      +-- bridge-table
+      |  +-- next-hop
+      |  +-- vlan-aware-bundle-eth-tag
+      |  +-- mac-ip
+      |  |  +-- advertise
+      |  |  +-- advertise-arp-nd-only-with-mac-table-entry
+      |  |  +-- advertise-arp-nd-extended-community
+      |  +-- inclusive-mcast
+      |     +-- advertise
+      |     +-- originating-ip
+      +-- route-table
+         +-- mac-ip
+         |  +-- advertise-gateway-mac
+         +-- ip-prefix
+            +-- evpn-link-bandwidth
+            |  +-- advertise
+            |  |  +-- weight
+            |  |  +-- maximum-dynamic-weight
+            |  +-- weighted-ecmp
+            |     +-- admin-state
+            |     +-- max-ecmp-hash-buckets-per-next-hop-group
+            +-- evpn-interface-less-gateway-ip
+               +-- advertise
+               +-- resolve
+                  +-- admin-state
+                  +-- max-ecmp-hash-buckets-per-next-hop-group
+
+
+
+--{ + candidate shared default }--[ network-instance br-foo protocols ]--
+A:admin@leaf2# tree bgp-vpn
+bgp-vpn
++-- combined-ecmp
++-- allow-export
++-- bgp-instance
+   +-- export-policy
+   +-- import-policy
+   +-- route-distinguisher
+   |  +-- rd
+   +-- route-target
+      +-- export-rt
+      +-- import-rt
+
+
+--{ +* candidate shared default }--[ network-instance br-foo ]--
+A:admin@leaf1#
+
 ```
 
+Summary view of the config and state
+
+```
+--{ + running }--[ network-instance br-foo ]--
+A:admin@leaf1# show protocols bgp-evpn bgp-instance 1
+================================================================================================================================
+Net Instance   : br-foo
+    bgp Instance 1 is enabled and up
+--------------------------------------------------------------------------------------------------------------------------------
+        VXLAN-Interface   : vxlan0.0
+        evi               : 123
+        ecmp              : 1
+        oper-down-reason  : N/A
+        EVPN Routes
+            Next hop                       : None
+            VLAN Aware Bundle Ethernet tag : None
+            MAC/IP Routes                  : None
+            IMET Routes                    : None, originating-ip None
+================================================================================================================================
+
+--{ + running }--[ network-instance br-foo ]--
+A:admin@leaf1#
+
+A:admin@leaf2# show  network-instance br-foo protocols bgp-vpn bgp-instance 1
+============================================================================================================================
+Net Instance   : br-foo
+    bgp Instance 1
+----------------------------------------------------------------------------------------------------------------------------
+        route-distinguisher: 11.0.0.2:123, auto-derived-from-evi
+        export-route-target: target:65000:123, manual
+        import-route-target: target:65000:123, manual
+============================================================================================================================
+
+--{ + running }--[  ]--
+A:admin@leaf2#
+
+```
+summary of all network instances
+
+```
+A:admin@leaf2# show network-instance summary
++------------------------+-------------+-------------+-------------+------------------------+------------------------------+
+|          Name          |    Type     | Admin state | Oper state  |       Router id        |         Description          |
++========================+=============+=============+=============+========================+==============================+
+| br-foo                 | mac-vrf     | enable      | up          | N/A                    |                              |
+| br-foo-300             | mac-vrf     | enable      | up          | N/A                    |                              |
+| default                | default     | enable      | up          | 11.0.0.2               | fabric: myfabric-1 role:     |
+|                        |             |             |             |                        | leaf                         |
+| l3                     | ip-vrf      | enable      | up          |                        |                              |
+| mgmt                   | ip-vrf      | enable      | up          |                        | Management network instance  |
++------------------------+-------------+-------------+-------------+------------------------+------------------------------+
+
+--{ + running }--[  ]--
+A:admin@leaf2#
+```
+
+rib-in (pre / post) for evpn.
+
+```
+--{ + running }--[ network-instance default ]--
+
+A:admin@leaf2# info from state  bgp-rib afi-safi evpn evpn rib-in-out  | more
+    rib-in-pre {
+        mac-ip-route 11.0.0.1:123 mac-length 48 mac-address 00:11:11:11:11:11 ip-address 0.0.0.0 ethernet-tag-id 0 neighbor fe80::88:9ff:feff:3%ethernet-1/1.0 path-id 0 {
+            esi 00:00:00:00:00:00:00:00:00:00
+            attr-id 17
+            label1 {
+                value 100
+                value-type vni
+            }
+        }
+        mac-ip-route 11.0.0.1:123 mac-length 48 mac-address 00:11:11:11:11:11 ip-address 0.0.0.0 ethernet-tag-id 0 neighbor fe80::88:9ff:feff:4%ethernet-1/2.0 path-id 0 {
+            esi 00:00:00:00:00:00:00:00:00:00
+            attr-id 17
+            label1 {
+                value 100
+                value-type vni
+            }
+        }
+
+    rib-in-post {
+        mac-ip-route 11.0.0.1:123 mac-length 48 mac-address 00:11:11:11:11:11 ip-address 0.0.0.0 ethernet-tag-id 0 neighbor fe80::88:9ff:feff:3%ethernet-1/1.0 path-id 0 {
+            esi 00:00:00:00:00:00:00:00:00:00
+            attr-id 18
+            last-modified "2025-12-16T08:30:33.000Z (an hour ago)"
+            used-route true
+            unused-weight-only false
+            valid-route true
+            best-route true
+            backup-route false
+            stale-route false
+            pending-delete false
+            neighbor-as 101
+            group-best true
+            tie-break-reason none
+            label1 {
+                value 100
+                value-type vni
+            }
+        }
+
+A:admin@leaf2# info from state bgp-rib afi-safi evpn evpn local-rib
+    mac-ip-route 11.0.0.1:123 mac-length 48 mac-address 00:11:11:11:11:11 ip-address 0.0.0.0 ethernet-tag-id 0 neighbor fe80::88:9ff:feff:3%ethernet-1/1.0 path-id 0 {
+        esi 00:00:00:00:00:00:00:00:00:00
+        attr-id 18
+        last-modified "2025-12-16T08:36:47.900Z (an hour ago)"
+        used-route true
+        unused-weight-only false
+        valid-route true
+        best-route true
+        backup-route false
+        stale-route false
+        pending-delete false
+        neighbor-as 101
+        group-best true
+        tie-break-reason none
+        imported-network-instances [
+            br-foo
+        ]
+        label1 {
+            value 100
+            value-type vni
+        }
+    }
+
+
+A:admin@leaf1# info from state  network-instance default bgp-rib afi-safi evpn evpn local-rib  | grep -A 20  "22:22"
+    mac-ip-route 11.0.0.2:123 mac-length 48 mac-address 00:11:11:11:22:22 ip-address 0.0.0.0 ethernet-tag-id 0 neighbor fe80::88:9ff:feff:1%ethernet-1/1.0 path-id 0 {
+        esi 00:00:00:00:00:00:00:00:00:00
+        attr-id 32
+        last-modified "2025-12-16T11:48:09.100Z (2 hours ago)"
+        used-route false
+        unused-weight-only false
+        valid-route true
+        best-route true
+        backup-route false
+        stale-route false
+        pending-delete false
+        neighbor-as 101
+        group-best true
+        tie-break-reason none
+        label1 {
+            value 100
+            value-type vni
+        }
+    }
+
+
+```
+
+```
+A:admin@leaf2# show protocols bgp neighbor fe80::88:9ff:feff:3%ethernet-1/1.0 advertised-routes evpn
+--------------------------------------------------------------------------------------------------------------------------------
+Peer        : fe80::88:9ff:feff:3%ethernet-1/1.0, remote AS: 101, local AS: 102
+Type        : static
+Description : None
+Group       : bgpgroup-ebgp-myfabric-1
+--------------------------------------------------------------------------------------------------------------------------------
+Origin codes: i=IGP, e=EGP, ?=incomplete
+--------------------------------------------------------------------------------------------------------------------------------
+Type 2 MAC-IP Advertisement Routes
++-----------------+------------+-------------------+-----------------+--------+-----------------+-----------------+---------+
+|     Route-      |   Tag-ID   |    MAC-address    |   IP-address    |  Path  |    Next-Hop     |       MED       | LocPref |
+|  distinguisher  |            |                   |                 |        |                 |                 |         |
++=================+============+===================+=================+========+=================+=================+=========+
+| 11.0.0.2:123    | 0          | 00:11:11:11:22:22 | 0.0.0.0         | 0      | 11.0.0.2        | -               |         |
++-----------------+------------+-------------------+-----------------+--------+-----------------+-----------------+---------+
+--------------------------------------------------------------------------------------------------------------------------------
+Type 3 Inclusive Multicast Ethernet Tag Routes
++-----------------------+------------+---------------------+--------+-----------------------+-----------------------+---------+
+|  Route-distinguisher  |   Tag-ID   |    Originator-IP    |  Path  |       Next-Hop        |          MED          | LocPref |
++=======================+============+=====================+========+=======================+=======================+=========+
+| 11.0.0.2:123          | 0          | 11.0.0.2            | 0      | 11.0.0.2              | -                     |         |
++-----------------------+------------+---------------------+--------+-----------------------+-----------------------+---------+
+-
+
+[Override Next Hop]
+--{ + candidate shared default }--[ network-instance br-foo protocols bgp-evpn bgp-instance 1 routes ]--
+A:admin@leaf2# diff checkpoint 0
++     bridge-table {
++         next-hop 12.0.0.2
++     }
+
+[...]
+
+A:admin@leaf2# /show network-instance default protocols bgp neighbor fe80::88:9ff:feff:3%ethernet-1/1.0 advertised-routes evpn
+--------------------------------------------------------------------------------------------------------------------------------
+Peer        : fe80::88:9ff:feff:3%ethernet-1/1.0, remote AS: 101, local AS: 102
+Type        : static
+Description : None
+Group       : bgpgroup-ebgp-myfabric-1
+--------------------------------------------------------------------------------------------------------------------------------
+Origin codes: i=IGP, e=EGP, ?=incomplete
+--------------------------------------------------------------------------------------------------------------------------------
+Type 2 MAC-IP Advertisement Routes
++-----------------+------------+-------------------+-----------------+--------+-----------------+-----------------+---------+
+|     Route-      |   Tag-ID   |    MAC-address    |   IP-address    |  Path  |    Next-Hop     |       MED       | LocPref |
+|  distinguisher  |            |                   |                 |        |                 |                 |         |
++=================+============+===================+=================+========+=================+=================+=========+
+| 11.0.0.2:123    | 0          | 00:11:11:11:22:22 | 0.0.0.0         | 0      | 12.0.0.2        | -               |         |
++-----------------+------------+-------------------+-----------------+--------+-----------------+-----------------+---------+
+--------------------------------------------------------------------------------------------------------------------------------
+T
+
+A:admin@leaf1# show network-instance default protocols bgp routes evpn route-type summary
+*--------------------------------------------------------------------------------------------------------------------------------
+Show report for the BGP route table of network-instance "default"
+--------------------------------------------------------------------------------------------------------------------------------
+Status codes: u=used, *=valid, >=best, x=stale, b=backup, w=unused-weight-only
+Origin codes: i=IGP, e=EGP, ?=incomplete
+--------------------------------------------------------------------------------------------------------------------------------
+BGP Router ID: 11.0.0.1      AS: 100      Local AS: 100
+--------------------------------------------------------------------------------------------------------------------------------
+Type 2 MAC-IP Advertisement Routes
++----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+
+|  Status  | Route-di |  Tag-ID  |   MAC-   |   IP-    | neighbor | Path-id  | Next-Hop |  Label   |   ESI    |   MAC    |
+|          | stinguis |          | address  | address  |          |          |          |          |          | Mobility |
+|          |   her    |          |          |          |          |          |          |          |          |          |
++==========+==========+==========+==========+==========+==========+==========+==========+==========+==========+==========+
+| -        | 11.0.0.1 | 0        | 00:11:11 | 0.0.0.0  | fe80::88 | 0        | 11.0.0.1 | 100      | 00:00:00 | Seq:0/St |
+|          | :123     |          | :11:11:1 |          | :9ff:fef |          |          |          | :00:00:0 | atic     |
+|          |          |          | 1        |          | f:2%ethe |          |          |          | 0:00:00: |          |
+|          |          |          |          |          | rnet-    |          |          |          | 00:00    |          |
+|          |          |          |          |          | 1/2.0    |          |          |          |          |          |
+| u*>      | 11.0.0.2 | 0        | 00:11:11 | 0.0.0.0  | fe80::88 | 0        | 11.0.0.2 | 100      | 00:00:00 | Seq:0/St |
+|          | :123     |          | :11:22:2 |          | :9ff:fef |          |          |          | :00:00:0 | atic     |
+|          |          |          | 2        |          | f:1%ethe |          |          |          | 0:00:00: |          |
+|          |          |          |          |          | rnet-    |          |          |          | 00:00    |          |
+|          |          |          |          |          | 1/1.0    |          |          |          |          |          |
+| *        | 11.0.0.2 | 0        | 00:11:11 | 0.0.0.0  | fe80::88 | 0        | 11.0.0.2 | 100      | 00:00:00 | Seq:0/St |
+|          | :123     |          | :11:22:2 |          | :9ff:fef |          |          |          | :00:00:0 | atic     |
+|          |          |          | 2        |          | f:2%ethe |          |          |          | 0:00:00: |          |
+|          |          |          |          |          | rnet-    |          |          |          | 00:00    |          |
+|          |          |          |          |          | 1/2.0    |          |          |          |          |          |
++----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+
+--------------------------------------------------------------------------------------------------------------------------------
+Type 3 Inclusive Multicast Ethernet Tag Routes
++--------+-----------------------+------------+---------------------+-----------------------+--------+-----------------------+
+| Status |  Route-distinguisher  |   Tag-ID   |    Originator-IP    |       neighbor        | Path-  |       Next-Hop        |
+|        |                       |            |                     |                       |   id   |                       |
++========+=======================+============+=====================+=======================+========+=======================+
+| -      | 11.0.0.1:123          | 0          | 11.0.0.1            | fe80::88:9ff:feff:2%e | 0      | 11.0.0.1              |
+|        |                       |            |                     | thernet-1/2.0         |        |                       |
+| u*>    | 11.0.0.2:123          | 0          | 11.0.0.2            | fe80::88:9ff:feff:1%e | 0      | 11.0.0.2              |
+|        |                       |            |                     | thernet-1/1.0         |        |                       |
+| *      | 11.0.0.2:123          | 0          | 11.0.0.2            | fe80::88:9ff:feff:2%e | 0      | 11.0.0.2              |
+|        |                       |            |                     | thernet-1/2.0         |        |                       |
++--------+-----------------------+------------+---------------------+-----------------------+--------+-----------------------+
+--------------------------------------------------------------------------------------------------------------------------------
+0 Ethernet Auto-Discovery routes 0 used, 0 valid, 0 stale
+3 MAC-IP Advertisement routes 1 used, 2 valid, 0 stale
+3 Inclusive Multicast Ethernet Tag routes 1 used, 2 valid, 0 stale
+0 Ethernet Segment routes 0 used, 0 valid, 0 stale
+0 IP Prefix routes 0 used, 0 valid, 0 stale
+0 Selective Multicast Ethernet Tag routes 0 used, 0 valid, 0 stale
+0 Selective Multicast Membership Report Sync routes 0 used, 0 valid, 0 stale
+0 Selective Multicast Leave Sync routes 0 used, 0 valid, 0 stale
+--------------------------------------------------------------------------------------------------------------------------------
+
+--{ + running }--[  ]--
+A:admin@leaf1# *
+
+
+A:admin@leaf1# show network-instance default protocols bgp routes evpn route-type 2 mac-address *22* detail
+--------------------------------------------------------------------------------------------------------------------------------
+Show report for the EVPN routes in network-instance  "default"
+--------------------------------------------------------------------------------------------------------------------------------
+Route Distinguisher: 11.0.0.2:123
+Tag-ID             : 0
+MAC address        : 00:11:11:11:22:22
+IP Address         : 0.0.0.0
+neighbor           : fe80::88:9ff:feff:1%ethernet-1/1.0
+path-id            : 0
+Received paths     : 1
+  Path 1: <Best,Valid,Used,>
+    ESI               : 00:00:00:00:00:00:00:00:00:00
+    Label             : 100
+    Route source      : neighbor fe80::88:9ff:feff:1%ethernet-1/1.0 (last modified 1h30m13s ago)
+    Route preference  : No MED, LocalPref is 100
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.2
+    AS Path           :  i [101, 102]
+    Communities       : [target:65000:123, bgp-tunnel-encap:VXLAN, mac-mobility:Seq:0/Static]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+    Invalid Reason    : None
+    Tie Break Reason  : none
+    Route Flap Damping: None
+  Path 1 was advertised to (Modified Attributes):
+  [ fe80::88:9ff:feff:2%ethernet-1/2.0 ]
+    Route preference  : No MED, No LocalPref
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.2
+    AS Path           :  i [100, 101, 102]
+    Communities       : [target:65000:123, bgp-tunnel-encap:VXLAN, mac-mobility:Seq:0/Static]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+--------------------------------------------------------------------------------------------------------------------------------
+Route Distinguisher: 11.0.0.2:123
+Tag-ID             : 0
+MAC address        : 00:11:11:11:22:22
+IP Address         : 0.0.0.0
+neighbor           : fe80::88:9ff:feff:2%ethernet-1/2.0
+path-id            : 0
+Received paths     : 1
+  Path 1: <Valid,>
+    ESI               : 00:00:00:00:00:00:00:00:00:00
+    Label             : 100
+    Route source      : neighbor fe80::88:9ff:feff:2%ethernet-1/2.0 (last modified 1h30m14s ago)
+    Route preference  : No MED, LocalPref is 100
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.2
+    AS Path           :  i [101, 102]
+    Communities       : [target:65000:123, bgp-tunnel-encap:VXLAN, mac-mobility:Seq:0/Static]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+    Invalid Reason    : None
+    Tie Break Reason  : peer-ip
+    Route Flap Damping: None
+--------------------------------------------------------------------------------------------------------------------------------
+
+--{ + running }--[  ]--
+A:admin@leaf1#
+
+```
+
+
+```
+
+```
+
+All routes are kept in BGP
+
+```
+A:admin@leaf2# /show network-instance default protocols bgp routes evpn route-type 2 ip-address 100.0.0.2 detail
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Show report for the EVPN routes in network-instance  "default"
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Route Distinguisher: 11.0.0.2:123
+Tag-ID             : 0
+MAC address        : 00:11:11:11:22:22
+IP Address         : 100.0.0.2
+neighbor           : fe80::88:9ff:feff:4%ethernet-1/2.0
+path-id            : 0
+Received paths     : 1
+  Path 1: <>
+    ESI               : 00:00:00:00:00:00:00:00:00:00
+    Label             : 100
+    Route source      : neighbor fe80::88:9ff:feff:4%ethernet-1/2.0 (last modified 11m40s ago)
+    Route preference  : No MED, LocalPref is 100
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.2
+    AS Path           :  i [101, 102]
+    Communities       : [target:65000:123, bgp-tunnel-encap:VXLAN, mac-mobility:Seq:0/Static]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+    Invalid Reason    : As_Loop               <=====================  self AS  IS KEPT !!! 
+    Tie Break Reason  : none
+    Route Flap Damping: None
+```
+
+#### export process of local evpn routes
+
+Let's define a mac with IP resolution
+
+```
+A:admin@leaf2# info  network-instance br-foo bridge-table
+    static-mac {
+        mac 00:11:11:11:22:22 {
+            destination ethernet-1/3.100
+        }
+        mac 00:11:11:11:33:33 {
+            destination ethernet-1/3.200
+        }
+    }
+    proxy-arp {
+        static-entries {
+            neighbor 100.0.0.2 {
+                link-layer-address 00:11:11:11:22:22
+            }
+        }
+    }
+
+```
+
+``` 
+A:admin@leaf2# info from  state network-instance default bgp-rib afi-safi evpn evpn local-rib | grep -A 20 22
+    mac-ip-route 11.0.0.2:123 mac-length 48 mac-address 00:11:11:11:22:22 ip-address 0.0.0.0 ethernet-tag-id 0 neighbor 0.0.0.0 path-id 0 {
+        esi 00:00:00:00:00:00:00:00:00:00
+        attr-id 48
+        last-modified "2025-12-17T07:12:07.200Z (an hour ago)"
+        used-route false
+        unused-weight-only false
+        valid-route true
+        best-route true
+        backup-route false
+        stale-route false
+        pending-delete false
+        neighbor-as 0
+        group-best true
+        tie-break-reason none
+        label1 {
+            value 100
+            value-type vni
+        }
+    }
+
+### From remote switch
+
+A:admin@leaf1# show network-instance br-foo bridge-table mac-table all
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Mac-table of network instance br-foo
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++--------------------+---------------------------------------------------+------------+----------------+---------+--------+---------------------------------------------------+
+|      Address       |                    Destination                    | Dest Index |      Type      | Active  | Aging  |                    Last Update                    |
++====================+===================================================+============+================+=========+========+===================================================+
+| 00:11:11:11:11:11  | ethernet-1/3.0                                    | 6          | static         | true    | N/A    | 2025-12-11T14:57:45.000Z                          |
+| 00:11:11:11:22:22  | vxlan-interface:vxlan0.0 vtep:11.0.0.2 vni:100    | 3675954    | evpn-static    | true    | N/A    | 2025-12-16T17:26:52.000Z                          |
+| 00:11:11:11:33:33  | vxlan-interface:vxlan0.0 vtep:11.0.0.2 vni:100    | 3675954    | evpn-static    | true    | N/A    | 2025-12-16T17:26:52.000Z                          |
+| 02:1A:D0:FF:00:00  | vxlan-interface:vxlan0.0 vtep:11.0.0.2 vni:100    | 3675954    | evpn-static    | true    | N/A    | 2025-12-16T17:26:52.000Z                          |
++--------------------+---------------------------------------------------+------------+----------------+---------+--------+---------------------------------------------------+
+
+A:admin@leaf1# info from state network-instance default bgp-rib afi-safi evpn evpn local-rib | grep -A 20 22:22
+    mac-ip-route 11.0.0.2:123 mac-length 48 mac-address 00:11:11:11:22:22 ip-address 0.0.0.0 ethernet-tag-id 0 neighbor fe80::88:9ff:feff:1%ethernet-1/1.0 path-id 0 {
+        esi 00:00:00:00:00:00:00:00:00:00
+        attr-id 38
+        last-modified "2025-12-18T12:35:47.300Z (a day ago)"
+        used-route true
+        unused-weight-only false
+        valid-route true
+        best-route true
+        backup-route false
+        stale-route false
+        pending-delete false
+        neighbor-as 101
+        group-best true
+        tie-break-reason none
+        imported-network-instances [
+            br-foo
+        ]
+        label1 {
+            value 100
+            value-type vni
+        }
+T
+A:admin@leaf1# info from state network-instance default bgp-rib attr-sets attr-set 38
+    origin igp
+    atomic-aggregate false
+    next-hop 11.0.0.2
+    local-pref 100
+    as-path {
+        segment 0 {
+            type as-sequence
+            member [
+                101
+                102
+            ]
+        }
+    }
+    communities {
+        ext-community [
+            target:65000:123
+            bgp-tunnel-encap:VXLAN
+            mac-mobility:Seq:0/Static
+        ]
+    }
+
+-
+Route Distinguisher: 11.0.0.2:123
+Tag-ID             : 0
+MAC address        : 00:11:11:11:33:33
+IP Address         : 0.0.0.0
+neighbor           : fe80::88:9ff:feff:1%ethernet-1/1.0
+path-id            : 0
+Received paths     : 1
+  Path 1: <Best,Valid,Used,>
+    ESI               : 00:00:00:00:00:00:00:00:00:00
+    Label             : 100
+    Route source      : neighbor fe80::88:9ff:feff:1%ethernet-1/1.0 (last modified 1d1h11m40s ago)
+    Route preference  : No MED, LocalPref is 100
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.2
+    AS Path           :  i [101, 102]
+    Communities       : [target:65000:123, bgp-tunnel-encap:VXLAN, mac-mobility:Seq:0/Static]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+    Invalid Reason    : None
+    Tie Break Reason  : none
+    Route Flap Damping: None
+  Path 1 was advertised to (Modified Attributes):
+  [ fe80::88:9ff:feff:2%ethernet-1/2.0 ]
+    Route preference  : No MED, No LocalPref
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.2
+    AS Path           :  i [100, 101, 102]
+    Communities       : [target:65000:123, bgp-tunnel-encap:VXLAN, mac-mobility:Seq:0/Static]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+
+```
+The activation of proxy arp  generates a reserved mac address.
+
+```
+
+--{ +* candidate shared default }--[  ]--
+A:admin@leaf2# show network-instance br-foo bridge-table  mac-table  all
+----------------------------------------------------------------------------------------------------------------------------
+Mac-table of network instance br-foo
+----------------------------------------------------------------------------------------------------------------------------
++-------------------+-----------------------------+-----------+---------+--------+-------+-----------------------------+
+|      Address      |         Destination         |   Dest    |  Type   | Active | Aging |         Last Update         |
+|                   |                             |   Index   |         |        |       |                             |
++===================+=============================+===========+=========+========+=======+=============================+
+| 00:11:11:11:11:11 | vxlan-interface:vxlan0.0    | 3991720   | evpn-   | true   | N/A   | 2026-01-06T08:36:35.000Z    |
+|                   | vtep:11.0.0.1 vni:100       |           | static  |        |       |                             |
+| 00:11:11:11:22:22 | ethernet-1/3.100            | 5         | static  | true   | N/A   | 2026-01-05T09:45:07.000Z    |
+| 00:11:11:11:33:33 | ethernet-1/3.200            | 6         | static  | true   | N/A   | 2026-01-05T09:45:07.000Z    |
++-------------------+-----------------------------+-----------+---------+--------+-------+-----------------------------+
+
+
+A:admin@leaf2# set network-instance br-foo bridge-table proxy-arp admin-state enable
+
+A:admin@leaf2# commit stay
+All changes have been committed. Starting new transaction.
+
+A:admin@leaf2# show network-instance br-foo bridge-table  mac-table  all
+----------------------------------------------------------------------------------------------------------------------------
+Mac-table of network instance br-foo
+----------------------------------------------------------------------------------------------------------------------------
++-------------------+-----------------------------+-----------+---------+--------+-------+-----------------------------+
+|      Address      |         Destination         |   Dest    |  Type   | Active | Aging |         Last Update         |
+|                   |                             |   Index   |         |        |       |                             |
++===================+=============================+===========+=========+========+=======+=============================+
+| 00:11:11:11:11:11 | vxlan-interface:vxlan0.0    | 3991720   | evpn-   | true   | N/A   | 2026-01-06T08:36:35.000Z    |
+|                   | vtep:11.0.0.1 vni:100       |           | static  |        |       |                             |
+| 00:11:11:11:22:22 | ethernet-1/3.100            | 5         | static  | true   | N/A   | 2026-01-05T09:45:07.000Z    |
+| 00:11:11:11:33:33 | ethernet-1/3.200            | 6         | static  | true   | N/A   | 2026-01-05T09:45:07.000Z    |
+| 02:1A:D0:FF:00:00 | reserved                    | 0         | reserve | false  | N/A   | 2026-01-07T16:34:35.000Z    |
+|                   |                             |           | d       |        |       |                             |
++-------------------+-----------------------------+-----------+---------+--------+-------+-----------------------------+
+
+```
+
+#### vxlan L3
+
+proxy ARP in L2 VRF not compatible wiht irb proxy ARP.
+
+
+```
+--{ +* candidate shared default }--[ network-instance l3 ]--
+A:admin@leaf2# commit stay
+Error in /network-instance[name=br-foo]/interface[name=irb0.100]/name:
+    IRB interfaces cannot be configured with proxy-arp
+Error: Commit failed
+```
+
+```
+:admin@leaf2# info / network-instance br-foo
+[...]
+    bridge-table {
+[...]
+        proxy-arp {
+            admin-state enable
+            static-entries {
+                neighbor 100.0.0.2 {
+                    link-layer-address 00:11:11:11:22:22
+                }
+            }
+        }
+    }
+```
+
+```
+--{ + candidate shared default }--[ network-instance l3 ]--
+A:admin@leaf1# info
+    type ip-vrf
+    admin-state enable
+    ip-forwarding {
+    }
+    interface irb0.100 {
+    }
+    interface lo1.100 {
+    }
+    vxlan-interface vxlan0.1000 {
+    }
+    protocols {
+        bgp-evpn {
+            bgp-instance 1 {
+                vxlan-interface vxlan0.1000
+                evi 1000
+            }
+        }
+        bgp-vpn {
+            bgp-instance 1 {
+                route-target {
+                    export-rt target:65000:1000
+                    import-rt target:65000:1000
+                }
+            }
+        }
+    }
+```
+
+The mac from the vxlan (used source mac is advertised via the  mac community).
+
+
+```
+##### Leaf 1 receives Type 5 route 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Route Distinguisher: 11.0.0.2:1000
+Tag-ID             : 0
+ip-prefix-len      : 24
+ip-prefix          : 100.0.0.0/24
+neighbor           : fe80::88:9ff:feff:2%ethernet-1/2.0
+path-id            : 0
+Gateway IP         : 0.0.0.0
+Received paths     : 1
+  Path 1: <Valid,>
+    ESI               : 00:00:00:00:00:00:00:00:00:00
+    Label             : 1000
+    Route source      : neighbor fe80::88:9ff:feff:2%ethernet-1/2.0 (last modified 9m29s ago)
+    Route preference  : No MED, LocalPref is 100
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.2
+    AS Path           :  i [101, 102]
+    Communities       : [target:65000:1000, mac-nh:02:1a:d0:ff:00:00, bgp-tunnel-encap:VXLAN]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+    Invalid Reason    : None
+    Tie Break Reason  : peer-ip
+    Route Flap Damping: None
+
+
+##### The mac-nh is the address set for vxlan interface inner ethernet header
+
+
+A:admin@leaf2# info from  state /tunnel-interface vxlan0
+
+    vxlan-interface 1000 {
+        type routed
+        oper-state up
+        ingress {
+            vni 1000
+        }
+        egress {
+            source-ip use-system-ipv4-address
+            inner-ethernet-header {
+                used-source-mac 02:1A:D0:FF:00:00
+            }
+        }
+    }
+```
+
+Advertise static arp entries (in IRB) to L3 VRF 
+
+```
+--{ +* candidate shared default }--[ interface irb0 subinterface 100 ipv4 ]--
+A:admin@leaf2# info
+    admin-state enable
+    address 100.0.0.252/24 {
+    }
+    address 100.0.0.254/24 {
+        anycast-gw true
+    }
+    arp {
+        neighbor 100.0.0.112 {   <----------------------- static entry
+            link-layer-address 00:00:00:01:12:02
+        }
+        host-route {
+            populate static {   <--------------------------- does the trick 
+            }
+            populate dynamic { <------------------- that's for arp learnt
+            }
+        }
+    }
+
+
+
+:admin@leaf1# show route-table
+--------------------------------------------------------------------------------------------------------------------------------------------------
+IPv4 unicast route table of network instance l3
+--------------------------------------------------------------------------------------------------------------------------------------------------
++---------------+------+-----------+--------------------+---------+---------+--------+-----------+----------+----------+----------+----------+
+|    Prefix     |  ID  |   Route   |    Route Owner     | Active  | Origin  | Metric |   Pref    | Next-hop | Next-hop |  Backup  |  Backup  |
+|               |      |   Type    |                    |         | Network |        |           |  (Type)  | Interfac | Next-hop | Next-hop |
+|               |      |           |                    |         | Instanc |        |           |          |    e     |  (Type)  | Interfac |
+|               |      |           |                    |         |    e    |        |           |          |          |          |    e     |
++===============+======+===========+====================+=========+=========+========+===========+==========+==========+==========+==========+
+| 30.0.0.0/24   | 0    | bgp-evpn  | bgp_evpn_mgr       | True    | l3      | 0      | 170       | 11.0.0.2 |          |          |          |
+|               |      |           |                    |         |         |        |           | /32 (ind |          |          |          |
+|               |      |           |                    |         |         |        |           | irect/vx |          |          |          |
+|               |      |           |                    |         |         |        |           | lan)     |          |          |          |
+
+[...] here we go 
+
+| 100.0.0.112/3 | 0    | bgp-evpn  | bgp_evpn_mgr       | True    | l3      | 0      | 170       | 11.0.0.2 |          |          |          |
+| 2             |      |           |                    |         |         |        |           | /32 (ind |          |          |          |
+|        
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Route Distinguisher: 11.0.0.2:1000
+Tag-ID             : 0
+ip-prefix-len      : 32
+ip-prefix          : 100.0.0.112/32
+neighbor           : fe80::88:9ff:feff:1%ethernet-1/1.0
+path-id            : 0
+Gateway IP         : 0.0.0.0
+Received paths     : 1
+  Path 1: <Best,Valid,Used,>
+    ESI               : 00:00:00:00:00:00:00:00:00:00
+    Label             : 1000
+    Route source      : neighbor fe80::88:9ff:feff:1%ethernet-1/1.0 (last modified 4m30s ago)
+    Route preference  : No MED, LocalPref is 100
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.2
+    AS Path           :  i [101, 102]
+    Communities       : [target:65000:1000, mac-nh:02:1a:d0:ff:00:00, bgp-tunnel-encap:VXLAN]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+    Invalid Reason    : None
+    Tie Break Reason  : none
+    Route Flap Damping: None
+  Path 1 was advertised to (Modified Attributes):
+  [ fe80::88:9ff:feff:2%ethernet-1/2.0 ]
+    Route preference  : No MED, No LocalPref
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.2
+    AS Path           :  i [100, 101, 102]
+    Communities       : [target:65000:1000, mac-nh:02:1a:d0:ff:00:00, bgp-tunnel-encap:VXLAN]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+
+```
+
+By default: has ESI =0, GW=0, and mac community. This is the Interface-less IP-VRF-to-IP-VRF Model
+For redundancy: use of ESI as overlay index
+
+Second and 5th
+![](image.png)
+
+
+#### multihoming L3 virtual NH
+
+
+####
+
+all esi routes are kept in RIB even the ESI is not configured (rt-import policy not matched)
+
+A:admin@leaf1# show /network-instance default protocols bgp routes evpn route-type 4 detail
+
+```
+Route Distinguisher: 11.0.0.2:0
+ESI                : 00:80:80:80:80:80:00:00:00:00
+Originating Router : 11.0.0.2
+neighbor           : fe80::88:9ff:feff:1%ethernet-1/1.0
+path-id            : 0
+Received paths     : 1
+  Path 1: <Best,Valid,>
+    Route source      : neighbor fe80::88:9ff:feff:1%ethernet-1/1.0 (last modified 7m39s ago)
+    Route preference  : No MED, LocalPref is 100
+    Atomic Aggr       : false
+    BGP next-hop      : 11.0.0.3
+    AS Path           :  i [101, 102]
+    Communities       : [df-election::DF-Type:Auto/DP:0/DF-Preference:0/AC:1, target:80:80:80:80:80:00]
+    RR Attributes     : No Originator-ID, Cluster-List is []
+    Aggregation       : None
+    Unknown Attr      : None
+    Invalid Reason    : None
+    Tie Break Reason  : none
+    Route Flap Damping: None
+
+```
+
+#### export static ipv4 route to BGP
+
+```
+--{ + running }--[ network-instance default ]--
+A:admin@leaf2# info
+    next-hop-groups {
+        group blackhole {
+            blackhole {
+            }
+        }
+    }
+    static-routes {
+        route 123.0.0.1/32 {
+            next-hop-group blackhole
+            tag-value 123
+        }
+    }
+
+```
+route-table program:
+- static_route_mgr
+- origin 
+
+```
+
+A:admin@leaf2# info from state  route-table  ipv4-unicast
+
+    route 123.0.0.1/32 id 0 route-type static route-owner static_route_mgr origin-network-instance default {
+        leakable false
+        metric 1
+        preference 5
+        active true
+        last-app-update "2025-12-17T09:07:28.791Z (an hour ago)"
+        next-hop-group 3706426
+        next-hop-group-network-instance default
+        resilient-hash false
+        dynamic-load-balancing false
+        internal-tags [
+            "tag-value = 0x7b"
+        ]
+        fib-programming {
+            suppressed false
+            last-successful-operation-type add
+            last-successful-operation-timestamp "2025-12-17T09:07:28.822Z (an hour ago)"
+            pending-operation-type none
+            last-failed-operation-type none
+        }
+--{ + running }--[ network-instance default ]--
+A:admin@leaf2# info from state  route-table  next-hop-group 3706426
+    backup-next-hop-group 0
+    backup-active false
+    fib-programming {
+        last-successful-operation-type add
+        last-successful-operation-timestamp "2025-12-17T09:07:28.806Z (an hour ago)"
+        pending-operation-type none
+        last-failed-operation-type none
+    }
+    next-hop 0 {
+        next-hop 1
+        resolved not-applicable
+        resource-allocation-failed false
+    }
+
+--{ + running }--[ network-instance default ]--
+
+A:admin@leaf2# info from state  route-table  next-hop 1
+    resource-allocation-failed false
+    type discard
+
+--{ + running }--[ network-instance default ]--
+A:admin@leaf2#
+
+```
+
+- with no special export it appears in loc-rib - which is a bgp rib - 
+- this is not in rib-out (fortunately)
+
+```
+A:admin@leaf2# info from state  bgp-rib afi-safi ipv4-unicast ipv4-unicast local-rib | grep -A 20 123
+    route 123.0.0.1/32 neighbor 0.0.0.0 origin-protocol static path-id 0 {
+        last-modified "2025-12-17T09:07:28.800Z (2 hours ago)"
+        used-route true
+        unused-weight-only false
+        valid-route true
+        best-route true
+        backup-route false
+        stale-route false
+        fib-disabled false
+        pending-delete false
+        group-best true
+        tie-break-reason none
+        attr-id 52
+    }
+
+A:admin@leaf2# info from state bgp-rib afi-safi ipv4-unicast ipv4-unicast rib-in-out rib-out-post | grep 123
+
+--{ + candidate shared default }--[ network-instance default ]--
+A:admin@leaf2#
+
+```
+
+- add a stement for this route to export policy  
+
+```
+A:admin@leaf2# info /routing-policy policy ebgp-isl-export-policy-myfabric-1 statement 50
+    match {
+        protocol static
+        internal-tags {
+            tag-set [
+                tagset123
+            ]
+        }
+    }
+    action {
+        policy-result accept
+        bgp {
+            standard-community {
+                operation add
+                method reference
+                referenced-sets [
+                    comm123
+                ]
+            }
+            local-preference {
+                set 123
+            }
+        }
+    }
+```
+
+```
+
+### route-table ###
+
+A:admin@leaf2# info from state /network-instance default route-table ipv4-unicast
+
+    route 123.0.0.1/32 id 0 route-type static route-owner static_route_mgr origin-network-instance default {
+        leakable false
+        metric 1
+        preference 5
+        active true
+        last-app-update "2025-12-17T11:39:42.459Z (an hour ago)"
+        next-hop-group 3706426
+        next-hop-group-network-instance default
+        resilient-hash false
+        dynamic-load-balancing false
+        internal-tags [
+            "tag-value = 0x7b"
+        ]
+        fib-programming {
+            suppressed false
+            last-successful-operation-type modify
+            last-successful-operation-timestamp "2025-12-17T11:39:42.479Z (an hour ago)"
+            pending-operation-type none
+            last-failed-operation-type none
+        }
+    }
+
+
+### bgp-rib ###
+
+#### local-rib ####
+
+
+    route 123.0.0.1/32 neighbor 0.0.0.0 origin-protocol static path-id 0 {
+        last-modified "2025-12-17T12:08:30.100Z (56 minutes ago)"
+        used-route true
+        unused-weight-only false
+        valid-route true
+        best-route true
+        backup-route false
+        stale-route false
+        fib-disabled false
+        pending-delete false
+        group-best true
+        tie-break-reason none
+        attr-id 52
+    }
+
+===> local rib has no attribute modification 
+
+A:admin@leaf2# info from state /network-instance default bgp-rib attr-sets attr-set 52
+    origin incomplete
+    atomic-aggregate false
+    next-hop 0.0.0.0
+
+
+    route 123.0.0.1/32 neighbor fe80::88:9ff:feff:4%ethernet-1/2.0 origin-protocol bgp path-id 0 {
+        last-modified "2025-12-17T12:45:32.700Z (19 minutes ago)"
+        used-route false
+        unused-weight-only false
+        valid-route false
+        best-route false
+        backup-route false
+        stale-route false
+        fib-disabled false
+        pending-delete false
+        neighbor-as 101
+        group-best false
+        tie-break-reason none
+        attr-id 58
+        invalid-reason {
+            rejected-route false
+            as-loop true
+            next-hop-unresolved false
+            cluster-loop false
+            label-allocation-failed false
+            fib-programming-failed false
+        }
+    }
+
+
+A:admin@leaf2# info from state /network-instance default bgp-rib attr-sets attr-set 58
+    origin incomplete
+    atomic-aggregate false
+    next-hop fe80::88:9ff:feff:4%ethernet-1/2.0
+    local-pref 100
+    as-path {
+        segment 0 {
+            type as-sequence
+            member [
+                101
+                102
+            ]
+        }
+    }
+    communities {
+        community [
+            123:123
+        ]
+    }
+
+#### rib-out
+
+A:admin@leaf2# info from state /network-instance default bgp-rib afi-safi ipv4-unicast ipv4-unicast rib-in-out rib-out-post
+
+    route 123.0.0.1/32 neighbor fe80::88:9ff:feff:4%ethernet-1/2.0 path-id 0 {
+        attr-id 56
+    }
+
+
+A:admin@leaf2# info from state /network-instance default bgp-rib attr-sets attr-set 56
+    origin incomplete
+    atomic-aggregate false
+    next-hop ::
+    as-path {
+        segment 0 {
+            type as-sequence
+            member [
+                102
+            ]
+        }
+    }
+    communities {
+        community [
+            123:123
+        ]
+    }
+
+
+```
+
+The mac reachable from an interface are in info from state.
+- default use of system ipv4 address
+
+```
+A:admin@leaf2# info from state tunnel-interface vxlan0
+    vxlan-interface 0 {
+        type bridged
+        oper-state up
+        ingress {
+            vni 100
+        }
+        egress {
+            source-ip use-system-ipv4-address
+        }
+        bridge-table {
+            multicast-destinations {
+                multicast-limit {
+                    maximum-entries 768
+                    current-usage 1
+                }
+                destination 11.0.0.1 vni 100 {
+                    multicast-forwarding BUM
+                    destination-index 3991718
+                }
+            }
+            statistics {
+                active-entries 1
+                total-entries 1
+                failed-entries 0
+                mac-type evpn {
+                    active-entries 0
+                    total-entries 0
+                    failed-entries 0
+                }
+                mac-type evpn-static {
+                    active-entries 1
+                    total-entries 1
+                    failed-entries 0
+                }
+            }
+            unicast-destinations {
+                destination 11.0.0.1 vni 100 {
+                    destination-index 3991718
+                    statistics {
+                        active-entries 1
+                        total-entries 1
+                        failed-entries 0
+                        mac-type evpn {
+                            active-entries 0
+                            total-entries 0
+                            failed-entries 0
+                        }
+                        mac-type evpn-static {
+                            active-entries 1
+                            total-entries 1
+                            failed-entries 0
+                        }
+                    }
+                    mac-table {
+                        mac 00:11:11:11:11:11 {
+                            type evpn-static
+                            last-update "2026-01-05T09:45:10.000Z (20 hours ago)"
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+```
+
+Next hop chain for multicast - chained operation of nh groups !!!???
+
+IMET -> NH group 3991720 -> NH group 3991719 -> NH 3991718
+
+```
+A:admin@leaf2# info from state .. tunnel-interface vxlan0 vxlan-interface 0
+    type bridged
+[...]]
+            destination 11.0.0.1 vni 100 {
+                multicast-forwarding BUM
+                destination-index 3991720
+[...]
+            }
+        }
+
+A:admin@leaf2# info from state .. network-instance default route-table next-hop-group 3991720
+
+    backup-next-hop-group 0
+    backup-active false
+    fib-programming {
+        last-successful-operation-type add
+        last-successful-operation-timestamp "2026-01-06T08:36:35.876Z (5 hours ago)"
+        pending-operation-type none
+        last-failed-operation-type none
+    }
+    next-hop 0 {
+        next-hop 3991719
+        resolved not-applicable
+        resource-allocation-failed false
+    }
+
+--{ + candidate shared default }--[ network-instance l3 ]--
+A:admin@leaf2# info from state .. network-instance default route-table next-hop-group 3991719
+
+    backup-next-hop-group 0
+    backup-active false
+    fib-programming {
+        last-successful-operation-type add
+        last-successful-operation-timestamp "2026-01-06T08:36:35.876Z (5 hours ago)"
+        pending-operation-type none
+        last-failed-operation-type none
+    }
+    next-hop 0 {
+        next-hop 3991718
+        resolved not-applicable
+        resource-allocation-failed false
+    }
+
+--{ + candidate shared default }--[ network-instance l3 ]--
+A:admin@leaf2# info from state .. network-instance default route-table next-hop-group 3991718
+
+
+--{ + candidate shared default }--[ network-instance l3 ]--
+A:admin@leaf2# info from state .. network-instance default route-table next-hop 3991718
+
+    resource-allocation-failed false
+    type tunnel
+    tunnel {
+        ip-prefix 11.0.0.1/32
+        type vxlan
+        owner vxlan_mgr
+        tunnel-id 2
+        network-instance default
+    }
+    vxlan-encapsulation {
+        vni 0
+        destination-mac 00:00:00:00:00:00
+    }
+
+--{ + candidate shared default }--[ network-instance l3 ]--
+A:admin@leaf2#
+```
+
+### cx internals
+
+
+```
+### Internal Interface mapping
+
+
+
+[...]
+
+A:admin@leaf1# show interface ethernet-1/1 detail
+=====================================================================================================================================================
+Interface: ethernet-1/1
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+[....}]
+  MAC address         : 02:52:CC:FF:00:01
+
+admin@leaf1:~$ ip netns exec srbase ip -d link show  dev e1-1
+
+5: e1-1@e1-1-cx: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9232 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 12:ba:cf:1d:d2:31 brd ff:ff:ff:ff:ff:ff promiscuity 0  allmulti 0 minmtu 68 maxmtu 65535
+    veth addrgenmode eui64 numtxqueues 14 numrxqueues 14 gso_max_size 65536 gso_max_segs 65535 tso_max_size 524280 tso_max_segs 65535 gro_max_size 65536
+admin@leaf1:~$ ip netns exec srbase ip -d link show  dev e1-1-cx
+6: e1-1-cx@e1-1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9800 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether ca:c1:74:f0:fe:ba brd ff:ff:ff:ff:ff:ff promiscuity 0  allmulti 0 minmtu 68 maxmtu 65535
+    veth addrgenmode eui64 numtxqueues 14 numrxqueues 14 gso_max_size 65536 gso_max_segs 65535 tso_max_size 524280 tso_max_segs 65535 gro_max_size 65536
+admin@leaf1:~$
+
+admin@leaf1:~$ ip -d netns exec srbase-default ip link show
+
+11: e1-1.0@if34: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 02:52:cc:ff:00:01 brd ff:ff:ff:ff:ff:ff link-netns srbase
+    alias ethernet-1/1.0
+
+admin@leaf1:~$ ip -d netns exec srbase ip link show | grep -A 3 "34:"
+34: e1-1-0@if11: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether fe:a4:76:0f:e6:6c brd ff:ff:ff:ff:ff:ff link-netns srbase-default
+    alias ethernet-1/1.0
+
+
+```
+
+
+```
+ip netns exec srbase-default ip link add e1-5.0 address  02:52:cc:ff:00:05 type veth peer name e1-5-0
+
+ip netns exec srbase-default ip link add e1-5.0 address  02:52:cc:ff:00:05 alias ethernet-1/5.0 type veth peer name e1-5-0
+ip netns exec srbase-default ip link set alias ethernet-1/5.0 dev  e1-5.0
+ip netns exec srbase-default ip link set up dev  e1-5.0
+ip netns exec srbase-default ip link set up dev  e1-5-0
+ip netns exec srbase-default ip link show
+
+```
