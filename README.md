@@ -160,9 +160,13 @@ More interesting things in the eda-system namespace:
 - **Core Services**
   - `eda-api`, `eda-appstore`, `eda-asvr`, `eda-bsvr`, `eda-ce`, `eda-fe`, `eda-sa`, `eda-sc`, `eda-se`
   - *Role:* PI, app store, and core EDA services for orchestration and automation.
-- **Support Services**
+    - eda-asvr — Artifact server. Stores artifacts used by EDA (e.g. example SR Linux OS images, YANG models for a given release ...)
+    - eda-bsvr — Bootstrap server. Responsible for all onboarding tasks. Uses gRPC/gNMI to communicate with nodes.
+    - eda-api — Rest API server and GUI access pod
+    - eda-sa, eda-se, eda-sc — State Aggregator, –engine and –controller. Maintain intent defined states
+- **Backend / Auth / Support Services**
   - `eda-postgres`, `eda-keycloak`, `eda-metrics-server`, `eda-toolbox`
-  - *Role:* Database, authentication, metrics, and utility tools.
+  - *Role:* Database (postgres), authentication (keycloak), metrics (metric-server), and utility tools (eda-toolbox).
 - **Logging**
   - `eda-fluentbit`, `eda-fluentd`
   - *Role:* Collect and forward logs for observability.
@@ -174,9 +178,8 @@ More interesting things in the eda-system namespace:
   - *Role:* Certificate validation and trust management.
 - **NPP Nodes**
   - `eda-npp-0`, `eda-npp-1`
-  - *Role:* **Node Provisioning Platform** agents for Zero-Touch Provisioning (ZTP). Push initial configs /bootstrap scripts to network devices, ConfigEngine, IP assignment, TLS profiles...
+  - *Role:* **Node-Push-Pul** agents for Zero-Touch Provisioning (ZTP). Push initial configs /bootstrap scripts to network devices, ConfigEngine, IP assignment, TLS profiles...
 
-There are tons of CRs - full list [here.](assets/crds.log)
 
 ```
 root@eda-demo-control-plane:/# kubectl get crds
@@ -409,7 +412,7 @@ metadata:
 
 ### edactl and e9s
 
-- edactl command is very practical to fetch things from different components (kube-api, nodes, git...)
+- edactl command is rather practical to fetch things from different components (kube-api, nodes, git...)
 - e9s shows a dashboard a la k9s
 
 ```
@@ -492,6 +495,156 @@ The result is captured [here](assets/eda-api-access.log) - extract below with a 
     },
 [...]
 ```
+
+
+## Upgrade EDA
+
+### System Backup
+
+Instructions [here](https://docs.eda.dev/25.4/software-install/upgrades/)
+
+```(console)
+clab@C-5CG53743Q8:~$ edactl platform backup
+Platform backup done at eda-backup-engine-config-2026-01-27_11-05-57.tar.gz
+clab@C-5CG53743Q8:~$
+
+###
+##### This creates a file in toolbox container where edactl is located
+###
+
+clab@C-5CG53743Q8:~$ kubectl exec  -it -n eda-system eda-toolbox-76886bc564-vjw86 -- ls -l
+total 1916
+-rw-r--r-- 1 root root 1956283 Jan 27 11:05 eda-backup-engine-config-2026-01-27_11-05-57.tar.gz
+drwxr-xr-x 1 root root    4096 Oct 28 14:21 tools
+clab@C-5CG53743Q8:~$
+
+###
+##### Copy the backup file from pod to local server
+####
+
+clab@C-5CG53743Q8:~$ toolboxpod=$(kubectl -n eda-system get pods \
+-l eda.nokia.com/app=eda-toolbox -o jsonpath="{.items[0].metadata.name}")
+
+clab@C-5CG53743Q8:~$ kubectl cp eda-system/$toolboxpod:/eda/eda-backup-engine-config-2026-01-27_11-05-57.tar.gz     /tmp/eda-backup.tar.gz
+tar: Removing leading `/' from member names
+
+clab@C-5CG53743Q8:~$ ls /tmp/
+eda-backup.tar.gz  systemd-private-0daad8a2a3bf486e85e93fe6e1492381-systemd-logind.service-5Chz03
+
+
+```
+
+### Upgrade
+
+This is super simple
+
+```
+clab@C-5CG53743Q8:~/playground$ make download-tools download-pkgs update-pkgs
+--> TOOLS: Ensuring kubectl is present in /home/clab/playground/tools/kubectl-v1.34.1
+--> INFO: Downloading https://dl.k8s.io/release/v1.34.1/bin/linux/amd64/kubectl
+--> TOOLS: Ensuring kind is present in /home/clab/playground/tools/kind-v0.30.0
+--> INFO: Downloading https://kind.sigs.k8s.io/dl/v0.30.0/kind-linux-amd64
+--> TOOLS: Ensuring k9s is present in /home/clab/playground/tools/k9s-v0.50.16
+--> TOOLS: Creating aliases for versioned binaries
+
+clab@C-5CG53743Q8:~/playground$ edactl cluster stop
+Command "stop" is deprecated, and is replaced by "platform stop".
+clab@C-5CG53743Q8:~/playground$ kubectl get pods -n eda-system
+NAME                                           READY   STATUS    RESTARTS       AGE
+cert-manager-csi-driver-9p5rh                  3/3     Running   18 (21h ago)   63d
+cx-eda--leaf1-sim-65bcb67766-xk4mr             2/2     Running   10 (21h ago)   56d
+cx-eda--leaf2-sim-74645ff576-q76cv             2/2     Running   12 (21h ago)   63d
+cx-eda--spine1-sim-ccd9976f-t75kr              2/2     Running   12 (21h ago)   63d
+cx-eda--testman-default-sim-78dc8b8495-csj5l   2/2     Running   12 (21h ago)   63d
+eda-fluentbit-m5kpq                            1/1     Running   6 (21h ago)    63d
+eda-fluentd-9b78f4c9f-2tjwc                    1/1     Running   6 (21h ago)    63d
+eda-git-7487f97b5f-wq4qk                       1/1     Running   6 (21h ago)    63d
+eda-git-replica-6799f7bccb-gtsmg               1/1     Running   6 (21h ago)    63d
+eda-toolbox-76886bc564-vjw86                   1/1     Running   6 (21h ago)    63d
+trust-manager-849b644bdf-nbgrn                 1/1     Running   16 (21h ago)   63d
+clab@C-5CG53743Q8:~/playground$ 
+
+
+###
+##### kubectl edit to change more to emulate
+###
+
+clab@C-5CG53743Q8:~/playground$ kubectl get  -n eda toponodes.core.eda.nokia.com
+NAME     PLATFORM       VERSION   OS    ONBOARDED   MODE      NPP         NODE     AGE
+leaf1    7220 IXR-D3L   25.7.2    srl   true        emulate   Connected   Synced   63d
+leaf2    7220 IXR-D3L   25.7.2    srl   true        emulate   Connected   Synced   63d
+spine1   7220 IXR-D5    25.7.2    srl   true        emulate   Connected   Synced   63d
+clab@C-5CG53743Q8:~/playground$
+
+###
+##### There was an error when re-installing fluentd
+###
+
+clab@C-5CG53743Q8:~/playground$ make install-external-packages eda-install-core eda-is-core-ready
+--> KPT:EXT: Configuring external packages
+[...]
+    daemonset.apps/eda-fluentbit apply failed: error when applying patch:
+    {"metadata":{"annotations":{"kubectl.kubernetes.io/last-applied-configuration":"{\"apiVersion\":\"apps/v1\",\"kind\":\"DaemonSet\",\"metadata\":{\"annotations\":{\"config.k8s.io/owning-inventory\":\"cca7e82fd8b40a1e2cbeb83dfef600ec4b023f7a-1764067236413323668\"},\"name\":\"eda-fluentbit\",\"namespace\":\"eda-system\"},\"spec\":{\"selector\":{\"matchLabels\":{\"eda.nokia.com/app\":\"fluentbit\",\"name\":\"eda-fluentbit\"}},\"template\":{\"metadata\":{\"labels\":{\"eda.nokia.com/app\":\"fluentbit\",\"name\":\"eda-fluentbit\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"FLUENTD_HOST\",\"value\":\"fluentd.eda-system.svc\"},{\"name\":\"FLUENTD_PORT\",\"value\":\"24224\"}],\"image\":\"ghcr.io/nokia-eda/core/fluent-bit:3.0.7-amd64\",\"name\":\"fluent-bit\",\"resources\":{\"limits\":{\"memory\":\"1Gi\"},\"requests\":{\"cpu\":\"100m\",\"memory\":\"100Mi\"}},\"securityContext\":{\"privileged\":true},\"volumeMounts\":[{\"mountPath\":\"/var/log\",\"name\":\"varlog\"},{\"mountPath\":\"/var/log/containers\",\"name\":\"varlogcontainers\",\"readOnly\":true},{\"mountPath\":\"/fluent-bit/etc/\",\"name\":\"fluent-bit-config\"}]}],\"imagePullSecrets\":[{\"name\":\"core\"}],\"serviceAccountName\":\"fluent-bit\",\"terminationGracePeriodSeconds\":10,\"volumes\":[{\"hostPath\":{\"path\":\"/var/log\"},\"name\":\"varlog\"},{\"hostPath\":{\"path\":\"/var/log/containers\"},\"name\":\"varlogcontainers\"},{\"configMap\":{\"name\":\"fluent-bit-config\"},\"name\":\"fluent-bit-config\"}]}}}}\n"}},"spec":{"selector":{"matchLabels":{"app":null,"eda.nokia.com/app":"fluentbit"}},"template":{"metadata":{"labels":{"app":null,"eda.nokia.com/app":"fluentbit"}}}}}
+    to:
+    Resource: "apps/v1, Resource=daemonsets", GroupVersionKind: "apps/v1, Kind=DaemonSet"
+    Name: "eda-fluentbit", Namespace: "eda-system"
+    for: "fluentd-bit-ds.yaml": error when patching "fluentd-bit-ds.yaml": DaemonSet.apps "eda-fluentbit" is invalid: spec.selector: Invalid value: v1.LabelSelector{MatchLabels:map[string]string{"eda.nokia.com/app":"fluentbit", "name":"eda-fluentbit"}, MatchExpressions:[]v1.LabelSelectorRequirement(nil)}: field is immutable
+    apply phase finished
+[...]
+
+
+
+###
+##### Fix remove fluentd and restart the install
+####
+
+clab@C-5CG53743Q8:~/playground$ make  uninstall-external-package-fluentd
+--> UNINSTALL: [fluentd] - Destroying kpt package
+[...]
+
+
+clab@C-5CG53743Q8:~/playground$ make install-external-packages eda-install-core eda-is-core-ready
+[...]
+--> APPS:FLOW: Waiting for catalogs.appstore.eda.nokia.com - eda-catalog-builtin-apps .status.operational to be true -- Tue Jan 27 15:21:45 CET 2026
+
+
+clab@C-5CG53743Q8:/tmp$ kubectl cp /tmp/eda-backup.tar.gz eda-system/eda-toolbox-7f6745dcd4-mmhc5:/tmp/eda-backup.tar.gz
+
+clab@C-5CG53743Q8:/tmp$ kubectl exec -it -n eda-system eda-toolbox-7f6745dcd4-mmhc5 -- bash
+
+             .:....
+                .:=**+--:.
+              :=*******##**+-:..
+            .=+******###*++=-::.
+           -+++******######***=...
+          -++++******#######+----.
+       .-++++++******#########*-:::.
+      .++++++++******########=:=:.      EDA eda-toolbox-7f6745dcd4-mmhc5
+   ..-=---=++++******#########+  ..
+   ..      -++++=-:::-=+####::*=        K8s controller:  https://10.96.0.1:443
+            =++:         +##*  .        IP in cluster:   10.244.0.58/24
+            .:.           .-:
+
+root in on eda-toolbox-7f6745dcd4-mmhc5 /eda
+󰁽 80% ➜  edactl platform restore /tmp/eda-backup.tar.gz
+Restore job is queued successfully for Repo [backup security apps identity], if all goes well ce will restart/stop
+
+###
+##### re-install apps
+#### 
+
+clab@C-5CG53743Q8:~/playground$ make eda-install-apps
+--> APPS:FLOW: Found /eda/tools/edactl
+[...]
+
+###
+##### There is still an issue with keycloak. make try-eda fixed it. 
+###
+
+clab@C-5CG53743Q8:~/playground$ make try-eda
+```
+
+
 
 ### SRlinux stuffs
 
